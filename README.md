@@ -1,5 +1,5 @@
-[![KAP](https://circleci.com/gh/lancard/KAP.svg?style=svg)](https://circleci.com/gh/lancard/KAP)
-[![Release](https://img.shields.io/github/v/release/lancard/KAP?include_prereleases&style=for-the-badge)][1]
+[![KAP](https://circleci.com/gh/lancard/KAP.svg?style=sheild)](https://circleci.com/gh/lancard/KAP)
+[![Release](https://img.shields.io/github/v/release/lancard/KAP?include_prereleases&style=shield)][1]
 
 [1]: https://github.com/lancard/KAP/releases/latest
 
