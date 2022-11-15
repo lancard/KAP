@@ -1,0 +1,19 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0
+
+jobs:
+  build:
+    executor:
+      name: win/default
+    working_directory: C:\Users\circleci\project\KAP
+    steps:
+      - checkout:
+          path: C:\Users\circleci\project
+      - run:
+          name: "Run Build step"
+          command: msbuild .\KAP.vcxproj /property:Configuration=Release
+      - run:
+          name: "Upload Release"
+          command: ..\.circleci\GithubRelease.ps1 $env:GITHUB_TOKEN v2.1.1 "dll release" "dll download and load plugin from euroscope" lancard KAP .\Release\KAP.dll
