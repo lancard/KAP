@@ -1,7 +1,6 @@
 [![build](https://github.com/lancard/KAP/actions/workflows/build.yml/badge.svg)](https://github.com/lancard/KAP/actions/workflows/build.yml)
 [![Release](https://img.shields.io/github/v/release/lancard/KAP?include_prereleases&style=shield)][1]
-
-https://img.shields.io/github/languages/code-size/lancard/KAP
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/lancard/KAP)
 
 
 
