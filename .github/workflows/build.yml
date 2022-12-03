@@ -18,7 +18,7 @@ jobs:
         run: Get-Date -format "VERSION_STRING=1.yyyyMMdd.1HHmmss" | Out-File -FilePath $env:GITHUB_ENV -Append
        
       - name: run build step
-        run: msbuild .\KAP.vcxproj /property:Configuration=Release
+        run: msbuild ./KAP/KAP.vcxproj /property:Configuration=Release
 
       - name: create release
         id: create_release
