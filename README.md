@@ -3,6 +3,7 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/lancard/KAP)
 ![GitHub repo file count](https://img.shields.io/github/directory-file-count/lancard/KAP)
 ![GitHub all releases](https://img.shields.io/github/downloads/lancard/KAP/total)
+![GitHub Release Date](https://img.shields.io/github/release-date/lancard/KAP)
 
 # KAP (Korean ATC Plugin)
 한국용 유로스코프 플러그인
