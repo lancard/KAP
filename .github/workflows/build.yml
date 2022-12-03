@@ -12,6 +12,32 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Run build step
+      
+      - name: generate version string
+        run: Get-Date -format "yyyyMMddHHmmss"
+        
+      - run: $envGITHUB_ENV
+        
+      - name: run build step
         run: msbuild .\KAP.vcxproj /property:Configuration=Release
+
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ env.VERSION_STRING }}
+          release_name: Release ${{ env.VERSION_STRING }}
+          draft: false
+          prerelease: false
+
+      - name: upload release zip file
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: fans.zip
+          asset_name: fans.zip
+          asset_content_type: application/zip
