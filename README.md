@@ -1,6 +1,5 @@
 [![Release](https://img.shields.io/github/v/release/lancard/KAP?include_prereleases&style=shield)][1]
 ![GitHub Release Date](https://img.shields.io/github/release-date/lancard/KAP)
-
 [![build](https://github.com/lancard/KAP/actions/workflows/build.yml/badge.svg)](https://github.com/lancard/KAP/actions/workflows/build.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/lancard/KAP)
 ![GitHub repo file count](https://img.shields.io/github/directory-file-count/lancard/KAP)
