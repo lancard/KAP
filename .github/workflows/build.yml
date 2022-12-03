@@ -16,8 +16,6 @@ jobs:
       - name: generate version string
         run: Get-Date -format "VERSION_STRING=1.yyyyMMdd.1HHmmss" | Out-File -FilePath $env:GITHUB_ENV -Append
         
-      - run: echo ${{ env.VERSION_STRING }}
-        
       - name: run build step
         run: msbuild .\KAP.vcxproj /property:Configuration=Release
 
@@ -38,6 +36,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: fans.zip
-          asset_name: fans.zip
-          asset_content_type: application/zip
+          asset_path: Release/KAP.dll
+          asset_name: KAP.dll
+          asset_content_type: application/octet-stream
