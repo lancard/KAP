@@ -14,9 +14,9 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: generate version string
-        run: Get-Date -format "yyyyMMddHHmmss"
+        run: Get-Date -format "VERSION_STRING=1.yyyyMMdd.1HHmmss" >> $GITHUB_ENV
         
-      - run: $envGITHUB_ENV
+      - run: echo ${{ env.VERSION_STRING }}
         
       - name: run build step
         run: msbuild .\KAP.vcxproj /property:Configuration=Release
