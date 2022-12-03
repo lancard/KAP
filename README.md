@@ -1,3 +1,4 @@
+[![build](https://github.com/lancard/KAP/actions/workflows/build.yml/badge.svg)](https://github.com/lancard/KAP/actions/workflows/build.yml)
 [![KAP](https://circleci.com/gh/lancard/KAP.svg?style=shield)](https://circleci.com/gh/lancard/KAP)
 [![Release](https://img.shields.io/github/v/release/lancard/KAP?include_prereleases&style=shield)][1]
 
