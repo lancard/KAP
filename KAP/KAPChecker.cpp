@@ -4,7 +4,7 @@
 
 
 // FIR count
-#define NUMBER_OF_FIX_LIST 17
+#define NUMBER_OF_FIX_LIST 18
 CPosition fir_boundary_fix_list[NUMBER_OF_FIX_LIST];
 CKAPChecker::CKAPChecker(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	"KAP",
@@ -80,6 +80,10 @@ CKAPChecker::CKAPChecker(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	// SAPRA
 	fir_boundary_fix_list[16].m_Latitude = 35.823835;
 	fir_boundary_fix_list[16].m_Longitude = 130.72357583333334;
+
+	// BEDAR
+	fir_boundary_fix_list[17].m_Latitude = 31.900277777777777;
+	fir_boundary_fix_list[17].m_Longitude = 126.48611111111111;
 
 	RegisterTagItemType("RKRR_Checker", TAG_ITEM_RKRR);
 }
