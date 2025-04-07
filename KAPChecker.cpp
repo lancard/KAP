@@ -152,10 +152,13 @@ CKAPChecker::CKAPChecker(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	RIVAT = &fir_boundary_fix_list[22];
 	
 	RegisterTagItemType("RKRR_Checker", TAG_ITEM_RKRR);
+
+	DisplayUserMessage("Message", "KAP", std::string("KAP Loaded.").c_str(), false, false, false, false, false);
 }
 
 CKAPChecker::~CKAPChecker(void)
 {
+	DisplayUserMessage("Message", "KAP", std::string("KAP Unloaded.").c_str(), false, false, false, false, false);
 }
 
 void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget, int ItemCode, int TagData, 
@@ -341,7 +344,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		// near AGAVO
 		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*AGAVO) < 40 &&
-			RadarTarget.GetPosition().GetReportedHeading() > 190 && RadarTarget.GetPosition().GetReportedHeading() < 350)
+			RadarTarget.GetTrackHeading() > 190 && RadarTarget.GetTrackHeading() < 350)
 		{
 			// RVSM(ft)
 			if (final_altitude == 21700 || final_altitude == 23600 || final_altitude == 25600 || final_altitude == 27600 || final_altitude == 30100 || final_altitude == 32100 || final_altitude == 34100 || final_altitude == 36100 || final_altitude == 38100 || final_altitude == 40100)
@@ -422,7 +425,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 		// near GOLOT
 		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*GOLOT) < 40 &&
-			RadarTarget.GetPosition().GetReportedHeading() > 270 && RadarTarget.GetPosition().GetReportedHeading() < 350)
+			RadarTarget.GetTrackHeading() > 270 && RadarTarget.GetTrackHeading() < 350)
 		{
 			// RVSM(ft)
 			if (final_altitude == 21700 || final_altitude == 23600 || final_altitude == 25600 || final_altitude == 27600 || final_altitude == 30100 || final_altitude == 32100 || final_altitude == 34100 || final_altitude == 36100 || final_altitude == 38100 || final_altitude == 40100)
@@ -502,7 +505,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 		// near TOMUK
 		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*TOMUK) < 40 &&
-			RadarTarget.GetPosition().GetReportedHeading() > 190 && RadarTarget.GetPosition().GetReportedHeading() < 350)
+			RadarTarget.GetTrackHeading() > 190 && RadarTarget.GetTrackHeading() < 350)
 		{
 			// RVSM(ft)
 			if (final_altitude == 21700 || final_altitude == 23600 || final_altitude == 25600 || final_altitude == 27600 || final_altitude == 30100 || final_altitude == 32100 || final_altitude == 34100 || final_altitude == 36100 || final_altitude == 38100 || final_altitude == 40100)
@@ -582,7 +585,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 		// near VASRO
 		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*VASRO) < 40 &&
-			RadarTarget.GetPosition().GetReportedHeading() > 270 && RadarTarget.GetPosition().GetReportedHeading() < 359)
+			RadarTarget.GetTrackHeading() > 270 && RadarTarget.GetTrackHeading() < 359)
 		{
 			// RVSM(ft)
 			if (final_altitude == 21700 || final_altitude == 23600 || final_altitude == 25600 || final_altitude == 27600 || final_altitude == 30100 || final_altitude == 32100 || final_altitude == 34100 || final_altitude == 36100 || final_altitude == 38100 || final_altitude == 40100)
@@ -656,7 +659,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	
 		// near LAMEN
 		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*LAMEN) < 40 &&
-			RadarTarget.GetPosition().GetReportedHeading() > 190 && RadarTarget.GetPosition().GetReportedHeading() < 350)
+			RadarTarget.GetTrackHeading() > 190 && RadarTarget.GetTrackHeading() < 350)
 		{
 			if (destination_airport == "ZSPD" ||
 				destination_airport == "ZSSS" ||
@@ -687,7 +690,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near ADNUR
-		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*ADNUR) < 40 && RadarTarget.GetPosition().GetReportedHeading() < 90)
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*ADNUR) < 40 && RadarTarget.GetTrackHeading() < 90)
 		{
 			if (destination_airport == "UHWW"){
 				if (final_altitude != 25000 && final_altitude != 23000 && final_altitude != 21000 && final_altitude != 19000 &&
@@ -702,7 +705,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	
 		// near RIVAT
 		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*RIVAT) < 40 && 
-			(RadarTarget.GetPosition().GetReportedHeading() < 90 || RadarTarget.GetPosition().GetReportedHeading() > 330))
+			(RadarTarget.GetTrackHeading() < 90 || RadarTarget.GetTrackHeading() > 330))
 		{
 			if (destination_airport == "UHWW"){
 				if (final_altitude != 25000 && final_altitude != 23000 && final_altitude != 21000 && final_altitude != 19000 &&
@@ -717,7 +720,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 		// near INVOK
 		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*INVOK) < 40 &&
-			RadarTarget.GetPosition().GetReportedHeading() > 90 && RadarTarget.GetPosition().GetReportedHeading() < 180)
+			RadarTarget.GetTrackHeading() > 90 && RadarTarget.GetTrackHeading() < 180)
 		{
 			if (destination_airport == "RJFF"){
 				if (final_altitude != 25000){
@@ -731,7 +734,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 		// near APELA
 		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*APELA) < 40 &&
-			RadarTarget.GetPosition().GetReportedHeading() > 90 && RadarTarget.GetPosition().GetReportedHeading() < 180)
+			RadarTarget.GetTrackHeading() > 90 && RadarTarget.GetTrackHeading() < 180)
 		{
 			if (destination_airport == "RJFF"){
 				if (final_altitude != 25000){
@@ -745,7 +748,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 		// near BESNA
 		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*BESNA) < 40 &&
-			RadarTarget.GetPosition().GetReportedHeading() > 90 && RadarTarget.GetPosition().GetReportedHeading() < 180)
+			RadarTarget.GetTrackHeading() > 90 && RadarTarget.GetTrackHeading() < 180)
 		{
 			if (destination_airport == "RJFF"){
 				if (final_altitude != 25000){
@@ -776,6 +779,10 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		double proper_altitude_by_100 = FlightPlan.GetDistanceToDestination() * 3;
 		double proper_altitude = FlightPlan.GetDistanceToDestination() * 3 * 100;
+
+		if (proper_altitude_by_100 < 0.0) {
+			proper_altitude_by_100 = 0.0;
+		}
 
 		if (RadarTarget.GetPosition().GetPressureAltitude() > proper_altitude) // standard pressure: param.RadarTarget.Position.FlightLevel
 		{
