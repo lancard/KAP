@@ -29,7 +29,11 @@ public:
 		POINT Pt,
 		RECT Area);
 
+	void setTag(char *target, int *targetColorCode, COLORREF *targetColor, int colorCode, COLORREF color, const char *format, ...);
+	
 	void OnFlightPlanFlightPlanDataUpdate(CFlightPlan FlightPlan);
+
+	double calculateDistanceInNm(CRadarTarget RadarTarget, CPosition point);
 
 	void OnTimer(int Counter);
 };
