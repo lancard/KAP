@@ -31,7 +31,7 @@ CPosition *ADNUR;
 CPosition *RIVAT;
 CKAPChecker::CKAPChecker(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	"KAP",
-	"2.4",
+	"2.5",
 	"Sung-ho Kim",
 	"Sung-ho Kim")
 {
@@ -427,69 +427,47 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			else
 			{
 				if (destination_airport == "ZYTX"){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL217/6600m");
 					return;
 				}
 				if (final_altitude == 22000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL217/6600m");
 					return;
 				}
 				if (final_altitude == 24000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL236/7200m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL236/7200m");
 					return;
 				}
 				if (final_altitude == 26000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL256/7800m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL256/7800m");
 					return;
 				}
 				if (final_altitude == 28000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL276/8400m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL276/8400m");
 					return;
 				}
 				if (final_altitude == 30000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL301/9200m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL301/9200m");
 					return;
 				}
 				if (final_altitude == 32000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL321/9800m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL321/9800m");
 					return;
 				}
 				if (final_altitude == 34000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL341/10400m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL341/10400m");
 					return;
 				}
 				if (final_altitude == 36000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL361/11000m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL361/11000m");
 					return;
 				}
 				if (final_altitude == 38000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL381/11600m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL381/11600m");
 					return;
 				}
 				if (final_altitude == 40000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL401/12200m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL401/12200m");
 					return;
 				}
 			}
@@ -506,69 +484,47 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			else
 			{
 				if (destination_airport == "ZYTL"){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL217/6600m");
 					return;
 				}
 				if (final_altitude == 22000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL217/6600m");
 					return;
 				}
 				if (final_altitude == 24000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL236/7200m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL236/7200m");
 					return;
 				}
 				if (final_altitude == 26000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL256/7800m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL256/7800m");
 					return;
 				}
 				if (final_altitude == 28000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL276/8400m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL276/8400m");
 					return;
 				}
 				if (final_altitude == 30000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL301/9200m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL301/9200m");
 					return;
 				}
 				if (final_altitude == 32000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL321/9800m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL321/9800m");
 					return;
 				}
 				if (final_altitude == 34000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL341/10400m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL341/10400m");
 					return;
 				}
 				if (final_altitude == 36000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL361/11000m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL361/11000m");
 					return;
 				}
 				if (final_altitude == 38000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL381/11600m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL381/11600m");
 					return;
 				}
 				if (final_altitude == 40000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL401/12200m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL401/12200m");
 					return;
 				}
 			}
@@ -585,63 +541,43 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			else
 			{
 				if (final_altitude == 22000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL217/6600m");
 					return;
 				}
 				if (final_altitude == 24000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL236/7200m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL236/7200m");
 					return;
 				}
 				if (final_altitude == 26000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL256/7800m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL256/7800m");
 					return;
 				}
 				if (final_altitude == 28000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL276/8400m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL276/8400m");
 					return;
 				}
 				if (final_altitude == 30000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL301/9200m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL301/9200m");
 					return;
 				}
 				if (final_altitude == 32000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL321/9800m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL321/9800m");
 					return;
 				}
 				if (final_altitude == 34000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL341/10400m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL341/10400m");
 					return;
 				}
 				if (final_altitude == 36000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL361/11000m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL361/11000m");
 					return;
 				}
 				if (final_altitude == 38000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL381/11600m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL381/11600m");
 					return;
 				}
 				if (final_altitude == 40000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL401/12200m");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL401/12200m");
 					return;
 				}
 			}
@@ -660,9 +596,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 				destination_airport == "ZSHC"
 			){
 				if (final_altitude != 22000 && final_altitude != 24000 && final_altitude != 26000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL220/240/260");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL220/240/260");
 					return;
 				}
 			}
@@ -670,9 +604,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			{
 				if (final_altitude != 24000 && final_altitude != 26000 && final_altitude != 28000 && final_altitude != 30000 &&
 					final_altitude != 32000 && final_altitude != 34000 && final_altitude != 36000 && final_altitude != 38000 && final_altitude != 40000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL240 or higher");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL240 or higher");
 					return;
 				}
 			}
@@ -684,9 +616,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			if (destination_airport == "UHWW"){
 				if (final_altitude != 25000 && final_altitude != 23000 && final_altitude != 21000 && final_altitude != 19000 &&
 					final_altitude != 17000 && final_altitude != 15000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL250 or lower");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250 or lower");
 					return;
 				}
 			}
@@ -698,9 +628,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			if (destination_airport == "UHWW"){
 				if (final_altitude != 25000 && final_altitude != 23000 && final_altitude != 21000 && final_altitude != 19000 &&
 					final_altitude != 17000 && final_altitude != 15000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL250 or lower");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250 or lower");
 					return;
 				}
 			}
@@ -711,9 +639,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		{
 			if (destination_airport == "RJFF"){
 				if (final_altitude != 25000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL250");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250");
 					return;
 				}
 			}
@@ -724,9 +650,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		{
 			if (destination_airport == "RJFF"){
 				if (final_altitude != 25000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL250");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250");
 					return;
 				}
 			}
@@ -737,9 +661,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		{
 			if (destination_airport == "RJFF"){
 				if (final_altitude != 25000){
-					_snprintf_s(sItemString, 16, 15, "%s", "FL250");
-					*pColorCode = TAG_COLOR_RGB_DEFINED;
-					*pRGB = RGB_YELLOW;
+					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250");
 					return;
 				}
 			}
@@ -748,9 +670,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		for (int a = 0; a < NUMBER_OF_FIX_LIST; a++){
 			double distance = calculateDistanceInNm(RadarTarget, fir_boundary_fix_list[a]);
 			if (distance < 20) {
-				_snprintf_s(sItemString, 16, 15, "NEED_HAND_OFF");
-				*pColorCode = TAG_COLOR_RGB_DEFINED;
-				*pRGB = RGB_YELLOW;
+				setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 				return;
 			}
 		}
@@ -771,16 +691,14 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		if (altitude > proper_altitude) // standard pressure: param.RadarTarget.Position.FlightLevel
 		{
 			// need descent
-			_snprintf_s(sItemString, 16, 15, "DES:%.0f", proper_altitude_by_100);
-			*pColorCode = TAG_COLOR_RGB_DEFINED;
-			*pRGB = RGB_YELLOW;
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "DES:%.0f", proper_altitude_by_100);
 			return;
 		}
 
 		// show proper altitude when approaching TD (top of descent)
 		if (altitude * 1.5 > proper_altitude || distance_to_destination < 50.0)
 		{
-			_snprintf_s(sItemString, 16, 15, "DES:%.0f", proper_altitude_by_100);
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "DES:%.0f", proper_altitude_by_100);
 			return;
 		}
 	}
