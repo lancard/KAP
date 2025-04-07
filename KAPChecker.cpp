@@ -6,6 +6,24 @@
 // FIR count
 #define NUMBER_OF_FIX_LIST 18
 CPosition fir_boundary_fix_list[NUMBER_OF_FIX_LIST];
+CPosition *AGAVO;
+CPosition *LAMEN;
+CPosition *ANDOL;
+CPosition *APELA;
+CPosition *ATOTI;
+CPosition *BESNA;
+CPosition *IGRAS;
+CPosition *INVOK;
+CPosition *KALEK;
+CPosition *KANSU;
+CPosition *LANAT;
+CPosition *MESOV;
+CPosition *MUGUS;
+CPosition *ONIKU;
+CPosition *RUGMA;
+CPosition *SAMDO;
+CPosition *SAPRA;
+CPosition *BEDAR;
 CKAPChecker::CKAPChecker(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	"KAP",
 	"2.3",
@@ -16,74 +34,92 @@ CKAPChecker::CKAPChecker(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	// AGAVO
 	fir_boundary_fix_list[0].m_Latitude = 37.166666666666664;
 	fir_boundary_fix_list[0].m_Longitude = 124;
+	AGAVO = &fir_boundary_fix_list[0];
 
 	// LAMEN
 	fir_boundary_fix_list[1].m_Latitude = 31.609954166666668;
 	fir_boundary_fix_list[1].m_Longitude = 124;
+	LAMEN = &fir_boundary_fix_list[1];
 
 	// ANDOL
 	fir_boundary_fix_list[2].m_Latitude = 37.66611111111111;
 	fir_boundary_fix_list[2].m_Longitude = 133;
+	ANDOL = &fir_boundary_fix_list[2];
 
 	// APELA
 	fir_boundary_fix_list[3].m_Latitude = 34.723055;
 	fir_boundary_fix_list[3].m_Longitude = 129.23333305555556;
+	APELA = &fir_boundary_fix_list[3];
 
 	// ATOTI
 	fir_boundary_fix_list[4].m_Latitude = 30.00355777777778;
 	fir_boundary_fix_list[4].m_Longitude = 125.19815694444445;
+	ATOTI = &fir_boundary_fix_list[4];
 
 	// BESNA
 	fir_boundary_fix_list[5].m_Latitude = 34.62166666666667;
 	fir_boundary_fix_list[5].m_Longitude = 129.13083333333333;
+	BESNA = &fir_boundary_fix_list[5];
 
 	// IGRAS
 	fir_boundary_fix_list[6].m_Latitude = 37.31257611111111;
 	fir_boundary_fix_list[6].m_Longitude = 132.7362372222222;
+	IGRAS = &fir_boundary_fix_list[6];
 
 	// INVOK
 	fir_boundary_fix_list[7].m_Latitude = 34.78860944444445;
 	fir_boundary_fix_list[7].m_Longitude = 129.32296944444445;
+	INVOK = &fir_boundary_fix_list[7];
 
 	// KALEK
 	fir_boundary_fix_list[8].m_Latitude = 35.208888611111114;
 	fir_boundary_fix_list[8].m_Longitude = 129.88472222222222;
+	KALEK = &fir_boundary_fix_list[7];
 
 	// KANSU
 	fir_boundary_fix_list[9].m_Latitude = 38.63333333333333;
 	fir_boundary_fix_list[9].m_Longitude = 132.475;
+	KANSU = &fir_boundary_fix_list[9];
 
 	// LANAT
 	fir_boundary_fix_list[10].m_Latitude = 36.373237499999995;
 	fir_boundary_fix_list[10].m_Longitude = 131.4283172222222;
+	LANAT = &fir_boundary_fix_list[10];
 
 	// MESOV
 	fir_boundary_fix_list[11].m_Latitude = 38.63333333333333;
 	fir_boundary_fix_list[11].m_Longitude = 130.46666666666667;
+	MESOV = &fir_boundary_fix_list[11];
 
 	// MUGUS
 	fir_boundary_fix_list[12].m_Latitude = 30.001666666666665;
 	fir_boundary_fix_list[12].m_Longitude = 124.95333333333333;
+	MUGUS = &fir_boundary_fix_list[12];
 
 	// ONIKU
 	fir_boundary_fix_list[13].m_Latitude = 32.194934999999994;
 	fir_boundary_fix_list[13].m_Longitude = 126.65470444444445;
+	ONIKU = &fir_boundary_fix_list[13];
 
 	// RUGMA
 	fir_boundary_fix_list[14].m_Latitude = 32.503340277777774;
 	fir_boundary_fix_list[14].m_Longitude = 126.96472416666667;
+	RUGMA = &fir_boundary_fix_list[14];
 
 	// SAMDO
 	fir_boundary_fix_list[15].m_Latitude = 33.58414916666667;
 	fir_boundary_fix_list[15].m_Longitude = 128.3157688888889;
+	SAMDO = &fir_boundary_fix_list[15];
 
 	// SAPRA
 	fir_boundary_fix_list[16].m_Latitude = 35.823835;
 	fir_boundary_fix_list[16].m_Longitude = 130.72357583333334;
+	SAPRA = &fir_boundary_fix_list[16];
 
 	// BEDAR
 	fir_boundary_fix_list[17].m_Latitude = 31.900277777777777;
 	fir_boundary_fix_list[17].m_Longitude = 126.48611111111111;
+	BEDAR = &fir_boundary_fix_list[17];
 
 	RegisterTagItemType("RKRR_Checker", TAG_ITEM_RKRR);
 }
