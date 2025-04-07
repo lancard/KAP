@@ -4,7 +4,7 @@
 
 
 // FIR count
-#define NUMBER_OF_FIX_LIST 18
+#define NUMBER_OF_FIX_LIST 23
 CPosition fir_boundary_fix_list[NUMBER_OF_FIX_LIST];
 CPosition *AGAVO;
 CPosition *LAMEN;
@@ -24,6 +24,11 @@ CPosition *RUGMA;
 CPosition *SAMDO;
 CPosition *SAPRA;
 CPosition *BEDAR;
+CPosition *GOLOT;
+CPosition *TOMUK;
+CPosition *VASRO;
+CPosition *ADNUR;
+CPosition *RIVAT;
 CKAPChecker::CKAPChecker(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	"KAP",
 	"2.3",
@@ -121,6 +126,31 @@ CKAPChecker::CKAPChecker(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	fir_boundary_fix_list[17].m_Longitude = 126.48611111111111;
 	BEDAR = &fir_boundary_fix_list[17];
 
+	// GOLOT
+	fir_boundary_fix_list[18].m_Latitude = 40.208333333333336;
+	fir_boundary_fix_list[18].m_Longitude = 124.50833333333334;
+	GOLOT = &fir_boundary_fix_list[18];
+
+	// TOMUK
+	fir_boundary_fix_list[19].m_Latitude = 38.71666666666667;
+	fir_boundary_fix_list[19].m_Longitude = 124.0;
+	TOMUK = &fir_boundary_fix_list[19];
+
+	// VASRO
+	fir_boundary_fix_list[20].m_Latitude = 42.46388888888889;
+	fir_boundary_fix_list[20].m_Longitude = 129.74027777777778;
+	VASRO = &fir_boundary_fix_list[20];
+
+	// ADNUR
+	fir_boundary_fix_list[21].m_Latitude = 42.208325;
+	fir_boundary_fix_list[21].m_Longitude = 130.8027888888889;
+	ADNUR = &fir_boundary_fix_list[21];
+
+	// RIVAT
+	fir_boundary_fix_list[22].m_Latitude = 41.483333333333334;
+	fir_boundary_fix_list[22].m_Longitude = 132.26666666666668;
+	RIVAT = &fir_boundary_fix_list[22];
+	
 	RegisterTagItemType("RKRR_Checker", TAG_ITEM_RKRR);
 }
 
@@ -309,16 +339,29 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	if (FlightPlan.GetTrackingControllerIsMe())
 	{
-		// check hand off (china)
-		if (RadarTarget.GetPosition().GetPosition().m_Longitude>123.5 && RadarTarget.GetPosition().GetPosition().m_Longitude<125)
+		// near AGAVO
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*AGAVO) < 40 &&
+			RadarTarget.GetPosition().GetReportedHeading() > 190 && RadarTarget.GetPosition().GetReportedHeading() < 350)
 		{
 			// RVSM(ft)
-			if (final_altitude == 23600 || final_altitude == 25600 || final_altitude == 27600 || final_altitude == 30100 || final_altitude == 32100 || final_altitude == 34100 || final_altitude == 36100 || final_altitude == 38100 || final_altitude == 40100)
+			if (final_altitude == 21700 || final_altitude == 23600 || final_altitude == 25600 || final_altitude == 27600 || final_altitude == 30100 || final_altitude == 32100 || final_altitude == 34100 || final_altitude == 36100 || final_altitude == 38100 || final_altitude == 40100)
 			{
 				// this is correct.
 			}
 			else
 			{
+				if (destination_airport == "ZSWH" || destination_airport == "ZSYT"){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 22000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
 				if (final_altitude == 24000){
 					_snprintf_s(sItemString, 16, 15, "%s", "FL236/7200m");
 					*pColorCode = TAG_COLOR_RGB_DEFINED;
@@ -376,7 +419,344 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			}
 		}
 
+
+		// near GOLOT
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*GOLOT) < 40 &&
+			RadarTarget.GetPosition().GetReportedHeading() > 270 && RadarTarget.GetPosition().GetReportedHeading() < 350)
+		{
+			// RVSM(ft)
+			if (final_altitude == 21700 || final_altitude == 23600 || final_altitude == 25600 || final_altitude == 27600 || final_altitude == 30100 || final_altitude == 32100 || final_altitude == 34100 || final_altitude == 36100 || final_altitude == 38100 || final_altitude == 40100)
+			{
+				// this is correct.
+			}
+			else
+			{
+				if (destination_airport == "ZYTX"){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 22000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 24000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL236/7200m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 26000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL256/7800m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 28000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL276/8400m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 30000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL301/9200m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 32000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL321/9800m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 34000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL341/10400m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 36000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL361/11000m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 38000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL381/11600m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 40000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL401/12200m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+			}
+		}
+
+		// near TOMUK
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*TOMUK) < 40 &&
+			RadarTarget.GetPosition().GetReportedHeading() > 190 && RadarTarget.GetPosition().GetReportedHeading() < 350)
+		{
+			// RVSM(ft)
+			if (final_altitude == 21700 || final_altitude == 23600 || final_altitude == 25600 || final_altitude == 27600 || final_altitude == 30100 || final_altitude == 32100 || final_altitude == 34100 || final_altitude == 36100 || final_altitude == 38100 || final_altitude == 40100)
+			{
+				// this is correct.
+			}
+			else
+			{
+				if (destination_airport == "ZYTL"){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 22000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 24000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL236/7200m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 26000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL256/7800m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 28000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL276/8400m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 30000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL301/9200m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 32000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL321/9800m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 34000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL341/10400m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 36000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL361/11000m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 38000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL381/11600m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 40000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL401/12200m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+			}
+		}
+
+		// near VASRO
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*VASRO) < 40 &&
+			RadarTarget.GetPosition().GetReportedHeading() > 270 && RadarTarget.GetPosition().GetReportedHeading() < 359)
+		{
+			// RVSM(ft)
+			if (final_altitude == 21700 || final_altitude == 23600 || final_altitude == 25600 || final_altitude == 27600 || final_altitude == 30100 || final_altitude == 32100 || final_altitude == 34100 || final_altitude == 36100 || final_altitude == 38100 || final_altitude == 40100)
+			{
+				// this is correct.
+			}
+			else
+			{
+				if (final_altitude == 22000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL217/6600m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 24000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL236/7200m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 26000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL256/7800m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 28000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL276/8400m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 30000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL301/9200m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 32000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL321/9800m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 34000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL341/10400m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 36000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL361/11000m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 38000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL381/11600m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+				if (final_altitude == 40000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL401/12200m");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+			}
+		}
 	
+		// near LAMEN
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*LAMEN) < 40 &&
+			RadarTarget.GetPosition().GetReportedHeading() > 190 && RadarTarget.GetPosition().GetReportedHeading() < 350)
+		{
+			if (destination_airport == "ZSPD" ||
+				destination_airport == "ZSSS" ||
+				destination_airport == "ZSNB" ||
+				destination_airport == "ZSWX" ||
+				destination_airport == "ZSNJ" ||
+				destination_airport == "ZSCG" ||
+				destination_airport == "ZSNT" ||
+				destination_airport == "ZSHC"
+			){
+				if (final_altitude != 22000 && final_altitude != 24000 && final_altitude != 26000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL220/240/260");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+			}
+			else
+			{
+				if (final_altitude != 24000 && final_altitude != 26000 && final_altitude != 28000 && final_altitude != 30000 &&
+					final_altitude != 32000 && final_altitude != 34000 && final_altitude != 36000 && final_altitude != 38000 && final_altitude != 40000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL240 or higher");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+			}
+		}
+
+		// near ADNUR
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*ADNUR) < 40 && RadarTarget.GetPosition().GetReportedHeading() < 90)
+		{
+			if (destination_airport == "UHWW"){
+				if (final_altitude != 25000 && final_altitude != 23000 && final_altitude != 21000 && final_altitude != 19000 &&
+					final_altitude != 17000 && final_altitude != 15000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL250 or lower");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+			}
+		}
+	
+		// near RIVAT
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*RIVAT) < 40 && 
+			(RadarTarget.GetPosition().GetReportedHeading() < 90 || RadarTarget.GetPosition().GetReportedHeading() > 330))
+		{
+			if (destination_airport == "UHWW"){
+				if (final_altitude != 25000 && final_altitude != 23000 && final_altitude != 21000 && final_altitude != 19000 &&
+					final_altitude != 17000 && final_altitude != 15000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL250 or lower");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+			}
+		}
+
+		// near INVOK
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*INVOK) < 40 &&
+			RadarTarget.GetPosition().GetReportedHeading() > 90 && RadarTarget.GetPosition().GetReportedHeading() < 180)
+		{
+			if (destination_airport == "RJFF"){
+				if (final_altitude != 25000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL250");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+			}
+		}
+
+		// near APELA
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*APELA) < 40 &&
+			RadarTarget.GetPosition().GetReportedHeading() > 90 && RadarTarget.GetPosition().GetReportedHeading() < 180)
+		{
+			if (destination_airport == "RJFF"){
+				if (final_altitude != 25000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL250");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+			}
+		}
+
+		// near BESNA
+		if (RadarTarget.GetPosition().GetPosition().DistanceTo(*BESNA) < 40 &&
+			RadarTarget.GetPosition().GetReportedHeading() > 90 && RadarTarget.GetPosition().GetReportedHeading() < 180)
+		{
+			if (destination_airport == "RJFF"){
+				if (final_altitude != 25000){
+					_snprintf_s(sItemString, 16, 15, "%s", "FL250");
+					*pColorCode = TAG_COLOR_RGB_DEFINED;
+					*pRGB = RGB_YELLOW;
+					return;
+				}
+			}
+		}
+		
 		if (destination_airport[0] == 'R' && destination_airport[1] == 'K') {
 			for (int a = 0; a < NUMBER_OF_FIX_LIST; a++){
 				double distance = RadarTarget.GetPosition().GetPosition().DistanceTo(fir_boundary_fix_list[a]);
