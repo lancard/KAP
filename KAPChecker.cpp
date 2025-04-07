@@ -8,7 +8,7 @@
 CPosition fir_boundary_fix_list[NUMBER_OF_FIX_LIST];
 CKAPChecker::CKAPChecker(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	"KAP",
-	"2.2",
+	"2.3",
 	"Sung-ho Kim",
 	"Sung-ho Kim")
 {
