@@ -688,7 +688,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			proper_altitude_by_100 = 0.0;
 		}
 
-		if (altitude > proper_altitude) // standard pressure: param.RadarTarget.Position.FlightLevel
+		if (altitude > proper_altitude)
 		{
 			// need descent
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "DES:%.0f", proper_altitude_by_100);
