@@ -174,7 +174,7 @@ void CKAPChecker::setTag(char *target, int *targetColorCode, COLORREF *targetCol
 	}
 
 	va_list args;
-    va_start(args, format);
+	va_start(args, format);
 
 	_vsnprintf_s(target, 16, 15, format, args);
 
