@@ -1,155 +1,16 @@
 #include "KAPChecker.h"
+#include "KAPFixes.h"
 
 #define RGB_YELLOW     RGB(255, 255, 0)
 
-
-// FIR count
-#define NUMBER_OF_FIX_LIST 23
-CPosition fir_boundary_fix_list[NUMBER_OF_FIX_LIST];
-CPosition *AGAVO;
-CPosition *LAMEN;
-CPosition *ANDOL;
-CPosition *APELA;
-CPosition *ATOTI;
-CPosition *BESNA;
-CPosition *IGRAS;
-CPosition *INVOK;
-CPosition *KALEK;
-CPosition *KANSU;
-CPosition *LANAT;
-CPosition *MESOV;
-CPosition *MUGUS;
-CPosition *ONIKU;
-CPosition *RUGMA;
-CPosition *SAMDO;
-CPosition *SAPRA;
-CPosition *BEDAR;
-CPosition *GOLOT;
-CPosition *TOMUK;
-CPosition *VASRO;
-CPosition *ADNUR;
-CPosition *RIVAT;
 CKAPChecker::CKAPChecker(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	"KAP",
-	"2.5",
+	"2.7",
 	"Sung-ho Kim",
 	"Sung-ho Kim")
 {
-
-	// AGAVO
-	fir_boundary_fix_list[0].m_Latitude = 37.166666666666664;
-	fir_boundary_fix_list[0].m_Longitude = 124;
-	AGAVO = &fir_boundary_fix_list[0];
-
-	// LAMEN
-	fir_boundary_fix_list[1].m_Latitude = 31.609954166666668;
-	fir_boundary_fix_list[1].m_Longitude = 124;
-	LAMEN = &fir_boundary_fix_list[1];
-
-	// ANDOL
-	fir_boundary_fix_list[2].m_Latitude = 37.66611111111111;
-	fir_boundary_fix_list[2].m_Longitude = 133;
-	ANDOL = &fir_boundary_fix_list[2];
-
-	// APELA
-	fir_boundary_fix_list[3].m_Latitude = 34.723055;
-	fir_boundary_fix_list[3].m_Longitude = 129.23333305555556;
-	APELA = &fir_boundary_fix_list[3];
-
-	// ATOTI
-	fir_boundary_fix_list[4].m_Latitude = 30.00355777777778;
-	fir_boundary_fix_list[4].m_Longitude = 125.19815694444445;
-	ATOTI = &fir_boundary_fix_list[4];
-
-	// BESNA
-	fir_boundary_fix_list[5].m_Latitude = 34.62166666666667;
-	fir_boundary_fix_list[5].m_Longitude = 129.13083333333333;
-	BESNA = &fir_boundary_fix_list[5];
-
-	// IGRAS
-	fir_boundary_fix_list[6].m_Latitude = 37.31257611111111;
-	fir_boundary_fix_list[6].m_Longitude = 132.7362372222222;
-	IGRAS = &fir_boundary_fix_list[6];
-
-	// INVOK
-	fir_boundary_fix_list[7].m_Latitude = 34.78860944444445;
-	fir_boundary_fix_list[7].m_Longitude = 129.32296944444445;
-	INVOK = &fir_boundary_fix_list[7];
-
-	// KALEK
-	fir_boundary_fix_list[8].m_Latitude = 35.208888611111114;
-	fir_boundary_fix_list[8].m_Longitude = 129.88472222222222;
-	KALEK = &fir_boundary_fix_list[7];
-
-	// KANSU
-	fir_boundary_fix_list[9].m_Latitude = 38.63333333333333;
-	fir_boundary_fix_list[9].m_Longitude = 132.475;
-	KANSU = &fir_boundary_fix_list[9];
-
-	// LANAT
-	fir_boundary_fix_list[10].m_Latitude = 36.373237499999995;
-	fir_boundary_fix_list[10].m_Longitude = 131.4283172222222;
-	LANAT = &fir_boundary_fix_list[10];
-
-	// MESOV
-	fir_boundary_fix_list[11].m_Latitude = 38.63333333333333;
-	fir_boundary_fix_list[11].m_Longitude = 130.46666666666667;
-	MESOV = &fir_boundary_fix_list[11];
-
-	// MUGUS
-	fir_boundary_fix_list[12].m_Latitude = 30.001666666666665;
-	fir_boundary_fix_list[12].m_Longitude = 124.95333333333333;
-	MUGUS = &fir_boundary_fix_list[12];
-
-	// ONIKU
-	fir_boundary_fix_list[13].m_Latitude = 32.194934999999994;
-	fir_boundary_fix_list[13].m_Longitude = 126.65470444444445;
-	ONIKU = &fir_boundary_fix_list[13];
-
-	// RUGMA
-	fir_boundary_fix_list[14].m_Latitude = 32.503340277777774;
-	fir_boundary_fix_list[14].m_Longitude = 126.96472416666667;
-	RUGMA = &fir_boundary_fix_list[14];
-
-	// SAMDO
-	fir_boundary_fix_list[15].m_Latitude = 33.58414916666667;
-	fir_boundary_fix_list[15].m_Longitude = 128.3157688888889;
-	SAMDO = &fir_boundary_fix_list[15];
-
-	// SAPRA
-	fir_boundary_fix_list[16].m_Latitude = 35.823835;
-	fir_boundary_fix_list[16].m_Longitude = 130.72357583333334;
-	SAPRA = &fir_boundary_fix_list[16];
-
-	// BEDAR
-	fir_boundary_fix_list[17].m_Latitude = 31.900277777777777;
-	fir_boundary_fix_list[17].m_Longitude = 126.48611111111111;
-	BEDAR = &fir_boundary_fix_list[17];
-
-	// GOLOT
-	fir_boundary_fix_list[18].m_Latitude = 40.208333333333336;
-	fir_boundary_fix_list[18].m_Longitude = 124.50833333333334;
-	GOLOT = &fir_boundary_fix_list[18];
-
-	// TOMUK
-	fir_boundary_fix_list[19].m_Latitude = 38.71666666666667;
-	fir_boundary_fix_list[19].m_Longitude = 124.0;
-	TOMUK = &fir_boundary_fix_list[19];
-
-	// VASRO
-	fir_boundary_fix_list[20].m_Latitude = 42.46388888888889;
-	fir_boundary_fix_list[20].m_Longitude = 129.74027777777778;
-	VASRO = &fir_boundary_fix_list[20];
-
-	// ADNUR
-	fir_boundary_fix_list[21].m_Latitude = 42.208325;
-	fir_boundary_fix_list[21].m_Longitude = 130.8027888888889;
-	ADNUR = &fir_boundary_fix_list[21];
-
-	// RIVAT
-	fir_boundary_fix_list[22].m_Latitude = 41.483333333333334;
-	fir_boundary_fix_list[22].m_Longitude = 132.26666666666668;
-	RIVAT = &fir_boundary_fix_list[22];
+	InitializeFixes();
+	InitializeFirBoundaryFixes();
 	
 	RegisterTagItemType("RKRR_Checker", TAG_ITEM_RKRR);
 
@@ -203,10 +64,27 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	bool need_odd_level = false;
 	bool need_even_level = false;
 
+	string flight_rule = FlightPlan.GetFlightPlanData().GetPlanType();
 	string origin_airport = FlightPlan.GetFlightPlanData().GetOrigin();
 	string destination_airport = FlightPlan.GetFlightPlanData().GetDestination();
+	// check destination airport starts with RK
+	bool is_destination_rk = false;
+	if (destination_airport.length() >= 2 && destination_airport.substr(0, 2) == "RK")
+	{
+		is_destination_rk = true;
+	}
+	string destination_rwy = FlightPlan.GetFlightPlanData().GetArrivalRwy();
+	if (flight_rule == "I" && is_destination_rk && destination_rwy.empty())
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
+		return;
+	}
 	int altitude = RadarTarget.GetPosition().GetPressureAltitude();
 	int final_altitude = FlightPlan.GetFlightPlanData().GetFinalAltitude();
+	int temp_altitude = FlightPlan.GetControllerAssignedData().GetClearedAltitude();
+	int temp_or_final_altitude = ( temp_altitude <= 0 ? final_altitude : temp_altitude );
+	bool cleared_approach = ( temp_altitude == 1 );
+	bool cleared_visual_approach = ( temp_altitude == 2 );
 	double heading = RadarTarget.GetTrackHeading();
 
 	if (
@@ -353,7 +231,6 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_ODD_ALT");
 			return;
 		}
-
 	}
 
 	if (FlightPlan.GetTrackingControllerIsMe())
@@ -595,15 +472,15 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 				destination_airport == "ZSNT" ||
 				destination_airport == "ZSHC"
 			){
-				if (final_altitude != 22000 && final_altitude != 24000 && final_altitude != 26000){
+				if (temp_or_final_altitude != 22000 && temp_or_final_altitude != 24000 && temp_or_final_altitude != 26000){
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL220/240/260");
 					return;
 				}
 			}
 			else
 			{
-				if (final_altitude != 24000 && final_altitude != 26000 && final_altitude != 28000 && final_altitude != 30000 &&
-					final_altitude != 32000 && final_altitude != 34000 && final_altitude != 36000 && final_altitude != 38000 && final_altitude != 40000){
+				if (temp_or_final_altitude != 24000 && temp_or_final_altitude != 26000 && temp_or_final_altitude != 28000 && temp_or_final_altitude != 30000 &&
+					temp_or_final_altitude != 32000 && temp_or_final_altitude != 34000 && temp_or_final_altitude != 36000 && temp_or_final_altitude != 38000 && temp_or_final_altitude != 40000){
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL240 or higher");
 					return;
 				}
@@ -614,8 +491,8 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		if (calculateDistanceInNm(RadarTarget, *ADNUR) < 40.0 && heading < 90.0)
 		{
 			if (destination_airport == "UHWW"){
-				if (final_altitude != 25000 && final_altitude != 23000 && final_altitude != 21000 && final_altitude != 19000 &&
-					final_altitude != 17000 && final_altitude != 15000){
+				if (temp_or_final_altitude != 25000 && temp_or_final_altitude != 23000 && temp_or_final_altitude != 21000 && temp_or_final_altitude != 19000 &&
+					temp_or_final_altitude != 17000 && temp_or_final_altitude != 15000){
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250 or lower");
 					return;
 				}
@@ -626,8 +503,8 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		if (calculateDistanceInNm(RadarTarget, *RIVAT) < 40.0 && (heading < 90.0 || heading > 330.0))
 		{
 			if (destination_airport == "UHWW"){
-				if (final_altitude != 25000 && final_altitude != 23000 && final_altitude != 21000 && final_altitude != 19000 &&
-					final_altitude != 17000 && final_altitude != 15000){
+				if (temp_or_final_altitude != 25000 && temp_or_final_altitude != 23000 && temp_or_final_altitude != 21000 && temp_or_final_altitude != 19000 &&
+					temp_or_final_altitude != 17000 && temp_or_final_altitude != 15000){
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250 or lower");
 					return;
 				}
@@ -638,7 +515,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		if (calculateDistanceInNm(RadarTarget, *INVOK) < 40.0 && heading > 90.0 && heading < 180.0)
 		{
 			if (destination_airport == "RJFF"){
-				if (final_altitude != 25000){
+				if (temp_or_final_altitude != 25000){
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250");
 					return;
 				}
@@ -649,7 +526,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		if (calculateDistanceInNm(RadarTarget, *APELA) < 40.0 && heading > 90.0 && heading < 180.0)
 		{
 			if (destination_airport == "RJFF"){
-				if (final_altitude != 25000){
+				if (temp_or_final_altitude != 25000){
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250");
 					return;
 				}
@@ -660,14 +537,14 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		if (calculateDistanceInNm(RadarTarget, *BESNA) < 40.0 && heading > 90.0 && heading < 180.0)
 		{
 			if (destination_airport == "RJFF"){
-				if (final_altitude != 25000){
+				if (temp_or_final_altitude != 25000){
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250");
 					return;
 				}
 			}
 		}
 		
-		for (int a = 0; a < NUMBER_OF_FIX_LIST; a++){
+		for (int a = 0; a < NUMBER_OF_FIR_BOUNDARY_FIX_LIST; a++){
 			double distance = calculateDistanceInNm(RadarTarget, fir_boundary_fix_list[a]);
 			if (distance < 20) {
 				setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
