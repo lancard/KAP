@@ -35,6 +35,4 @@ public:
 	double calculateDistanceInNm(CRadarTarget RadarTarget, CPosition point);
 
 	void OnTimer(int Counter);
-
-	bool OnCompileCommand(const char *sCommandLine);
 };
