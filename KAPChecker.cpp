@@ -6,7 +6,7 @@
 
 CKAPChecker::CKAPChecker(void) : CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 										 "KAP",
-										 "2.8",
+										 "2.9",
 										 "Sung-ho Kim",
 										 "Sung-ho Kim")
 {
@@ -79,12 +79,6 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		return;
 	}
 
-	if (!kapinfo.isVFR && kapinfo.DestinationRunway.empty())
-	{
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
-		return;
-	}
-
 	// ignore depature == arrival airport
 	if (kapinfo.DepartureAirport == kapinfo.DestinationAirport)
 	{
@@ -92,7 +86,11 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	}
 
 
-
+	if (!kapinfo.isVFR && kapinfo.DestinationRunway.empty())
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
+		return;
+	}
 
 	// check even or odd level
 	if (kapinfo.IsWestBoundPlan() && kapinfo.IsFinalOddLevel())
