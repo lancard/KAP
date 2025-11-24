@@ -1,7 +1,9 @@
 #pragma once
+#define PROGRAM_VERSION "3.0.0"
 #include <SDKDDKVer.h>
 #include <afxwin.h>
 #include <string>
+#include <unordered_map>
 #include "EuroScopePlugIn.h"
 
 using namespace std;

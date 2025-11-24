@@ -6,7 +6,7 @@
 
 CKAPChecker::CKAPChecker(void) : CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 										 "KAP",
-										 "2.8",
+										 PROGRAM_VERSION,
 										 "Sung-ho Kim",
 										 "Sung-ho Kim")
 {
@@ -91,9 +91,6 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		return;
 	}
 
-
-
-
 	// check even or odd level
 	if (kapinfo.IsWestBoundPlan() && kapinfo.IsFinalOddLevel())
 	{
@@ -110,7 +107,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	if (FlightPlan.GetTrackingControllerIsMe())
 	{
 		// near AGAVO
-		if (kapinfo.CalculateDistanceInNm(*AGAVO) < 40.0 && kapinfo.Heading > 190.0 && kapinfo.Heading < 350.0)
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["AGAVO"]) < 40.0 && kapinfo.Heading > 190.0 && kapinfo.Heading < 350.0)
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -178,7 +175,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near GOLOT
-		if (kapinfo.CalculateDistanceInNm(*GOLOT) < 40.0 && kapinfo.Heading > 270.0 && kapinfo.Heading < 350.0)
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["GOLOT"]) < 40.0 && kapinfo.Heading > 270.0 && kapinfo.Heading < 350.0)
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -246,7 +243,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near TOMUK
-		if (kapinfo.CalculateDistanceInNm(*TOMUK) < 40.0 && kapinfo.Heading > 190.0 && kapinfo.Heading < 350.0)
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["TOMUK"]) < 40.0 && kapinfo.Heading > 190.0 && kapinfo.Heading < 350.0)
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -314,7 +311,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near VASRO
-		if (kapinfo.CalculateDistanceInNm(*VASRO) < 40.0 && kapinfo.Heading > 270.0 && kapinfo.Heading < 359.0)
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["VASRO"]) < 40.0 && kapinfo.Heading > 270.0 && kapinfo.Heading < 359.0)
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -377,7 +374,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near LAMEN
-		if (kapinfo.CalculateDistanceInNm(*LAMEN) < 40.0 && kapinfo.Heading > 190.0 && kapinfo.Heading < 350.0)
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["LAMEN"]) < 40.0 && kapinfo.Heading > 190.0 && kapinfo.Heading < 350.0)
 		{
 			if (kapinfo.DestinationAirport == "ZSPD" ||
 				kapinfo.DestinationAirport == "ZSSS" ||
@@ -406,7 +403,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near ADNUR
-		if (kapinfo.CalculateDistanceInNm(*ADNUR) < 40.0 && kapinfo.Heading < 90.0)
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ADNUR"]) < 40.0 && kapinfo.Heading < 90.0)
 		{
 			if (kapinfo.DestinationAirport == "UHWW")
 			{
@@ -420,7 +417,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near RIVAT
-		if (kapinfo.CalculateDistanceInNm(*RIVAT) < 40.0 && (kapinfo.Heading < 90.0 || kapinfo.Heading > 330.0))
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["RIVAT"]) < 40.0 && (kapinfo.Heading < 90.0 || kapinfo.Heading > 330.0))
 		{
 			if (kapinfo.DestinationAirport == "UHWW")
 			{
@@ -434,7 +431,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near INVOK
-		if (kapinfo.CalculateDistanceInNm(*INVOK) < 40.0 && kapinfo.Heading > 90.0 && kapinfo.Heading < 180.0)
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["INVOK"]) < 40.0 && kapinfo.Heading > 90.0 && kapinfo.Heading < 180.0)
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
@@ -447,7 +444,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near APELA
-		if (kapinfo.CalculateDistanceInNm(*APELA) < 40.0 && kapinfo.Heading > 90.0 && kapinfo.Heading < 180.0)
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["APELA"]) < 40.0 && kapinfo.Heading > 90.0 && kapinfo.Heading < 180.0)
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
@@ -460,7 +457,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near BESNA
-		if (kapinfo.CalculateDistanceInNm(*BESNA) < 40.0 && kapinfo.Heading > 90.0 && kapinfo.Heading < 180.0)
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["BESNA"]) < 40.0 && kapinfo.Heading > 90.0 && kapinfo.Heading < 180.0)
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
@@ -472,9 +469,10 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			}
 		}
 
-		for (int a = 0; a < NUMBER_OF_FIR_BOUNDARY_FIX_LIST; a++)
+		// near FIR boundary - need hand-off
+		for (const auto & [key, value] : fir_boundary_fix_map)
 		{
-			double distance = kapinfo.CalculateDistanceInNm(fir_boundary_fix_list[a]);
+			double distance = kapinfo.CalculateDistanceInNm(value);
 			if (distance < 20)
 			{
 				setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
