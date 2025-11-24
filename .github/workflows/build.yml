@@ -27,7 +27,7 @@ jobs:
 
       - name: generate version string
         run: |
-          $content = Get-Content "EuroscopeACARSHandler.h"
+          $content = Get-Content "KAPChecker.h"
           $line = $content | Where-Object { $_ -match '#define PROGRAM_VERSION' }
           $version = ($line -replace '.*"(.*)".*','$1')
           Write-Output "VERSION_STRING=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
