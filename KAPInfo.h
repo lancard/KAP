@@ -1,9 +1,12 @@
 #define UNKNOWN 0
-#define DEPARTURE_GROUND 1
-#define DEPARTED 2
-#define CRUSING 3
-#define APPROACHING 4
-#define LANDED 5
+#define BEFORE_DEPARTURE 1
+#define GROUND_MOVING 2
+#define DEPARTED 3
+#define CRUSING 4
+#define ARRIVAL 5
+#define APPROACHING 6
+#define TAXI_TO_GATE 7
+#define PARKED_AT_GATE 8
 
 class CKAPInfo
 {
@@ -25,13 +28,72 @@ public:
 
     int GetTypeOfFlight()
     {
-        if (IsAirborne())
+        bool isCloserToDeparture = isCloserToDepartureThanArrival();
+
+        if (isCloserToDeparture)
         {
-            // return true
-            
+            if (IsAirborne())
+            {
+                return DEPARTED;
+            }
+
+            if (IsMoving())
+            {
+                return GROUND_MOVING;
+            }
+
+            return BEFORE_DEPARTURE;
+        }
+        else
+        {
+            if (!IsAirborne())
+            {
+                if (IsMoving())
+                {
+                    return TAXI_TO_GATE;
+                }
+
+                return PARKED_AT_GATE;
+            }
+
+            if (IsClearedApproach() || IsClearedVisualApproach())
+            {
+                return APPROACHING;
+            }
+            if (Altitude < 20000)
+            {
+                return ARRIVAL;
+            }
+            return CRUSING;
         }
 
         return UNKNOWN;
+    }
+
+    string GetTypeOfFlightString()
+    {
+        int type = GetTypeOfFlight();
+        switch (type)
+        {
+        case BEFORE_DEPARTURE:
+            return "BEFORE_DEPARTURE";
+        case GROUND_MOVING:
+            return "GROUND_MOVING";
+        case DEPARTED:
+            return "DEPARTED";
+        case CRUSING:
+            return "CRUSING";
+        case ARRIVAL:
+            return "ARRIVAL";
+        case APPROACHING:
+            return "APPROACHING";
+        case TAXI_TO_GATE:
+            return "TAXI_TO_GATE";
+        case PARKED_AT_GATE:
+            return "PARKED_AT_GATE";
+        default:
+            return "UNKNOWN";
+        }
     }
 
     bool IsAirborne()
@@ -41,16 +103,107 @@ public:
         return false;
     }
 
-    bool IsInRKRR()
+    bool IsMoving()
     {
-        return (Latitude >= 33.0 && Latitude <= 43.0 && Longitude >= 124.0 && Longitude <= 132.0);
-    }
-
-    bool IsAirborneAndApproachingToRKRR()
-    {
-        if (DestinationAirport.substr(0, 2) == "RK" && IsAirborne())
+        if (GroundSpeed > 3)
             return true;
         return false;
+    }
+
+    static bool PointInPolygon(const std::vector<std::pair<double, double>> &poly, double x, double y)
+    {
+        bool inside = false;
+        int n = (int)poly.size();
+        if (n < 3)
+            return false;
+
+        for (int i = 0, j = n - 1; i < n; j = i++)
+        {
+            double xi = poly[i].first, yi = poly[i].second;
+            double xj = poly[j].first, yj = poly[j].second;
+
+            bool intersect = ((yi > y) != (yj > y)) &&
+                             (x < (xj - xi) * (y - yi) / (yj - yi + 0.0) + xi);
+            if (intersect)
+                inside = !inside;
+        }
+        return inside;
+    }
+
+    bool isCloserToDepartureThanArrival()
+    {
+        // check dep and arr airport exist in airport_map
+        if (!airport_map.contains(DepartureAirport))
+            return false;
+        if (!airport_map.contains(DestinationAirport))
+            return false;
+
+        CPosition departurePos = airport_map[DepartureAirport];
+        CPosition arrivalPos = airport_map[DestinationAirport];
+        CPosition mylocation;
+        mylocation.m_Latitude = Latitude;
+        mylocation.m_Longitude = Longitude;
+
+        double distanceToDeparture = mylocation.DistanceTo(departurePos);
+        double distanceToArrival = mylocation.DistanceTo(arrivalPos);
+
+        return distanceToDeparture < distanceToArrival;
+    }
+
+    bool IsInRKRR()
+    {
+        static const vector<pair<double, double>> rkrrBoundary = {
+            {124.0, 38.0},
+            {124.85, 38.0},
+            {124.90277722222223, 37.9527775},
+            {124.8916663888889, 37.875},
+            {124.955555, 37.75833277777778},
+            {125.15277722222223, 37.61666666666667},
+            {125.32606333333332, 37.616661666666666},
+            {125.38245583333332, 37.635398055555555},
+            {125.52422416666667, 37.68642833333333},
+            {125.75442861111111, 37.718853611111115},
+            {126.01838777777778, 37.6641025},
+            {126.17973333333333, 37.72629555555556},
+            {126.21013194444444, 37.8151175},
+            {126.35555527777777, 37.84722166666667},
+            {126.43888833333334, 37.84722166666667},
+            {126.59166666666667, 37.77222222222222},
+            {126.68333333333334, 37.80833305555555},
+            {126.68333333333334, 37.9527775},
+            {126.78611111111111, 37.96666666666667},
+            {126.86944416666665, 38.041666388888885},
+            {126.87777777777777, 38.1},
+            {126.96111083333334, 38.144444444444446},
+            {126.96944444444445, 38.21666666666667},
+            {127.1416663888889, 38.31944388888889},
+            {127.23333333333333, 38.34166666666667},
+            {127.29999972222222, 38.32222222222222},
+            {127.3916663888889, 38.333333333333336},
+            {127.50833333333334, 38.30277722222222},
+            {127.56944416666666, 38.333333333333336},
+            {127.66444444444446, 38.33888888888889},
+            {127.78611111111111, 38.34722166666667},
+            {127.82222222222222, 38.31944388888889},
+            {127.8916663888889, 38.333333333333336},
+            {128.04722166666667, 38.31666666666667},
+            {128.1361111111111, 38.33888833333334},
+            {128.25555555555556, 38.41111111111111},
+            {128.3, 38.47222166666667},
+            {128.3138888888889, 38.59722166666667},
+            {128.36666666666667, 38.63333333333333},
+            {133.647211, 38.6361},
+            {132.997222, 38.002778},
+            {132.997222, 37.502778},
+            {130.33006, 35.52823},
+            {129.166667, 34.666667},
+            {127.5, 32.5},
+            {126.833333, 32.5},
+            {125.416667, 30.0},
+            {124.0, 30.0},
+            {124.0, 36.36},
+            {124.0, 38.0}};
+        return PointInPolygon(rkrrBoundary, Longitude, Latitude);
     }
 
     bool HasRoute(const char *airwayOrFix)

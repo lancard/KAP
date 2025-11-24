@@ -111,6 +111,7 @@
   <ItemGroup>
     <ClCompile Include="KAP.cpp" />
     <ClCompile Include="KAPChecker.cpp" />
+    <ClCompile Include="KAPFixes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KAP.h" />

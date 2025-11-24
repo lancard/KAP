@@ -11,6 +11,9 @@ async function generate() {
             longitude: navaid.longitude
         };
     });
+    const airport_raw = await fetch(`https://raw.githubusercontent.com/lancard/korea-flight-database/refs/heads/master/database/airport.json`);
+    const airport = await airport_raw.json();
+
 
     const boundary_navaids = mapped_navaids.filter(navaid => boundary_fix_names.includes(navaid.name));
     // map to convert lat and lon to decimal
@@ -20,6 +23,7 @@ async function generate() {
         `
 unordered_map<std::string, CPosition> fir_boundary_fix_map;
 unordered_map<std::string, CPosition> fix_map;
+unordered_map<std::string, CPosition> airport_map;
 
 CPosition GetCPositionFromString(const string& latitude, const string& longitude) {
     CPosition pos;
@@ -34,8 +38,12 @@ ${boundary_navaids.map(navaid => `    fir_boundary_fix_map["${navaid.name}"] = G
 void InitializeFixes() {
 ${mapped_navaids.map(navaid => `    fix_map["${navaid.name}"] = GetCPositionFromString("${navaid.latitude}", "${navaid.longitude}");`).join("\n")}
 }
+
+void InitializeAirports() {
+${Object.values(airport).map(a => `    airport_map["${a.icaoCode}"] = GetCPositionFromString("${a.latitude}", "${a.longitude}");`).join("\n")}
+}
 `
-    );    
+    );
 }
 
 generate();

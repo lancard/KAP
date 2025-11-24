@@ -1,5 +1,11 @@
 #include "KAPChecker.h"
-#include "KAPFixes.h"
+extern unordered_map<std::string, CPosition> fir_boundary_fix_map;
+extern unordered_map<std::string, CPosition> fix_map;
+extern unordered_map<std::string, CPosition> airport_map;
+CPosition GetCPositionFromString(const string& latitude, const string& longitude);
+void InitializeFirBoundaryFixes();
+void InitializeFixes();
+void InitializeAirports();
 #include "KAPInfo.h"
 
 #define RGB_YELLOW RGB(255, 255, 0)
@@ -10,8 +16,9 @@ CKAPChecker::CKAPChecker(void) : CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 										 "Sung-ho Kim",
 										 "Sung-ho Kim")
 {
-	InitializeFixes();
 	InitializeFirBoundaryFixes();
+	InitializeFixes();
+	InitializeAirports();
 
 	RegisterTagItemType("RKRR_Checker", TAG_ITEM_RKRR);
 
@@ -72,6 +79,10 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	kapinfo.isVFR = (FlightPlan.GetFlightPlanData().GetPlanType() == "V");
 	kapinfo.isSquawkModeC = RadarTarget.GetPosition().GetTransponderC();
 
+	string flightTypeString = kapinfo.GetTypeOfFlightString();
+	setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", flightTypeString.c_str());
+	return;
+
 	// check all!
 	if (kapinfo.IsAirborne() && !kapinfo.isSquawkModeC)
 	{
@@ -85,12 +96,6 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		return;
 	}
 
-	if (!kapinfo.isVFR && kapinfo.DestinationRunway.empty())
-	{
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
-		return;
-	}
-
 	// check even or odd level
 	if (kapinfo.IsWestBoundPlan() && kapinfo.IsFinalOddLevel())
 	{
@@ -101,6 +106,12 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	if (kapinfo.IsEastBoundPlan() && kapinfo.IsFinalEvenLevel())
 	{
 		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_ODD_ALT");
+		return;
+	}
+
+	if (!kapinfo.isVFR && kapinfo.DestinationRunway.empty())
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
 		return;
 	}
 
@@ -470,7 +481,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near FIR boundary - need hand-off
-		for (const auto & [key, value] : fir_boundary_fix_map)
+		for (const auto &[key, value] : fir_boundary_fix_map)
 		{
 			double distance = kapinfo.CalculateDistanceInNm(value);
 			if (distance < 20)
