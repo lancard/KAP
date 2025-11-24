@@ -79,15 +79,15 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		return;
 	}
 
-	if (!kapinfo.isVFR && kapinfo.DestinationRunway.empty())
-	{
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
-		return;
-	}
-
 	// ignore depature == arrival airport
 	if (kapinfo.DepartureAirport == kapinfo.DestinationAirport)
 	{
+		return;
+	}
+
+	if (!kapinfo.isVFR && kapinfo.DestinationRunway.empty())
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
 		return;
 	}
 
