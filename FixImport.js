@@ -1,4 +1,4 @@
-const boundary_fix_names = ["AGAVO", "LAMEN", "ANDOL", "APELA", "ATOTI", "BESNA", "IGRAS", "INVOK", "KALEK", "KANSU", "LANAT", "MESOV", "MUGUS", "ONIKU", "RUGMA", "SAMDO", "SAPRA", "BEDAR", "GOLOT", "TOMUK", "VASRO", "ADNUR", "RIVAT"];
+const boundary_fix_names = ["AGAVO", "LAMEN", "ANDOL", "APELA", "ATOTI", "BESNA", "IGRAS", "INVOK", "KALEK", "KANSU", "LANAT", "MESOV", "MUGUS", "ONIKU", "RUGMA", "SAMDO", "SAPRA", "BEDAR", "GOLOT", "TOMUK", "VASRO", "ADNUR", "RIVAT", "P2"];
 
 async function generate() {
     const navaid_raw = await fetch(`https://raw.githubusercontent.com/lancard/korea-flight-database/refs/heads/master/database/navaid.json`);

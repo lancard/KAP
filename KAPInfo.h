@@ -60,11 +60,6 @@ public:
                 return DEPARTED;
             }
 
-            if (IsMoving())
-            {
-                return TAXI_TO_RUNWAY;
-            }
-
             // check 0.15 nm in departure runway
             string AirportAndDepartureRunway = DepartureAirport + "-" + DepartureRunway;
             if (runway_map.contains(AirportAndDepartureRunway))
@@ -73,10 +68,15 @@ public:
                 CPosition mylocation = MyPosition();
 
                 double distanceToRunway = mylocation.DistanceTo(runwayPos);
-                if (distanceToRunway < 0.13)
+                if (distanceToRunway < 0.2)
                 {
                     return READY_FOR_DEP;
                 }
+            }
+
+            if (IsMoving())
+            {
+                return TAXI_TO_RUNWAY;
             }
 
             return PUSHBACK;
@@ -173,18 +173,8 @@ public:
 
     bool isCloserToDepartureThanArrival()
     {
-        // check dep and arr airport exist in airport_map
-        if (!airport_map.contains(DepartureAirport))
-            return false;
-        if (!airport_map.contains(DestinationAirport))
-            return false;
-
-        CPosition departurePos = airport_map[DepartureAirport];
-        CPosition arrivalPos = airport_map[DestinationAirport];
-        CPosition mylocation = MyPosition();
-
-        double distanceToDeparture = mylocation.DistanceTo(departurePos);
-        double distanceToArrival = mylocation.DistanceTo(arrivalPos);
+        double distanceToDeparture = GetDistanceFromDepartureInNm();
+        double distanceToArrival = GetDistanceFromDestinationInNm();
 
         return distanceToDeparture < distanceToArrival;
     }
@@ -245,10 +235,49 @@ public:
         return PointInPolygon(rkrrBoundary, Longitude, Latitude);
     }
 
+    bool IsSquawkCodeMatched()
+    {
+        if (PlanSquawk == CurrentSquawk)
+            return true;
+        return false;
+    }
+
     bool HasRoute(const char *airwayOrFix)
     {
         if (Route.find(airwayOrFix) != string::npos)
             return true;
+        return false;
+    }
+
+    bool IsWestBoundFlying()
+    {
+        if (Heading > 190.0 && Heading < 350.0)
+            return true;
+
+        return false;
+    }
+
+    bool IsEastBoundFlying()
+    {
+        if (Heading > 10.0 && Heading < 170.0)
+            return true;
+
+        return false;
+    }
+
+    bool IsNorthBoundFlying()
+    {
+        if (Heading > 280.0 || Heading < 80.0)
+            return true;
+
+        return false;
+    }
+
+    bool IsSouthBoundFlying()
+    {
+        if (Heading > 100.0 && Heading < 260.0)
+            return true;
+
         return false;
     }
 
@@ -257,6 +286,28 @@ public:
         if (HasRoute("Y711"))
             return true;
         if (HasRoute("Y572"))
+            return true;
+        if (HasRoute("Y697"))
+            return true;
+        if (HasRoute("Z53"))
+            return true;
+        if (HasRoute("MUGUS"))
+            return true;
+        if (HasRoute("KALEK Z84"))
+            return true;
+        if (HasRoute("G597 AGAVO"))
+            return true;
+        if (HasRoute("TOSAN Y572"))
+            return true;
+        if (HasRoute("TOSAN A586"))
+            return true;
+        if (HasRoute("LIMDI Y677 TOLIS"))
+            return true;
+        if (HasRoute("SADLI A593 LAMEN"))
+            return true;
+        if (HasRoute("PONIK A593 LAMEN"))
+            return true;
+        if (HasRoute("TOPAX A586 MAKET"))
             return true;
 
         return false;
@@ -270,6 +321,50 @@ public:
         if (HasRoute("Y781"))
             return true;
         if (HasRoute("Y571"))
+            return true;
+        if (HasRoute("Y590"))
+            return true;
+        if (HasRoute("Y209"))
+            return true;
+        if (HasRoute("Y685"))
+            return true;
+        if (HasRoute("Z84 KALEK"))
+            return true;
+        if (HasRoute("Y697 LANAT"))
+            return true;
+        if (HasRoute("G597 LANAT"))
+            return true;
+        if (HasRoute("Y579 TENAS"))
+            return true;
+        if (HasRoute("L512 ANDOL"))
+            return true;
+        if (HasRoute("Y233 KANSU"))
+            return true;
+        if (HasRoute("G597 BIKSI"))
+            return true;
+        if (HasRoute("Y697 BIKSI"))
+            return true;
+        if (HasRoute("G597 KAE"))
+            return true;
+        if (HasRoute("Y697 KAE"))
+            return true;
+        if (HasRoute("OSPOT A582"))
+            return true;
+        if (HasRoute("OSPOT Y782"))
+            return true;
+        if (HasRoute("TAMNA A595"))
+            return true;
+        if (HasRoute("TAMNA Y677"))
+            return true;
+        if (HasRoute("PSN G339 INVOK"))
+            return true;
+        if (HasRoute("PSN Z91 INVOK"))
+            return true;
+        if (HasRoute("PSN A582 APELA"))
+            return true;
+        if (HasRoute("PSN Y782 APELA"))
+            return true;
+        if (HasRoute("MAKET A586 TOPAX"))
             return true;
 
         return false;
@@ -340,6 +435,58 @@ public:
             FinalAltitude == 38000)
             return true;
         return false;
+    }
+
+    double GetDistanceFromDepartureInNm()
+    {
+        if (!airport_map.contains(DepartureAirport))
+            return 0.0;
+
+        CPosition departurePos = airport_map[DepartureAirport];
+        CPosition mylocation = MyPosition();
+
+        return mylocation.DistanceTo(departurePos);
+    }
+
+    double GetDistanceFromDestinationInNm()
+    {
+        if (!airport_map.contains(DestinationAirport))
+            return 0.0;
+
+        CPosition destinationPos = airport_map[DestinationAirport];
+        CPosition mylocation = MyPosition();
+
+        return mylocation.DistanceTo(destinationPos);
+    }
+
+    bool NeedExpeditedDescent()
+    {
+        if (Altitude > GetProperAltitudeForDestination())
+        {
+            return true;
+        }
+
+        return false;
+    }
+    bool NeedDescent()
+    {
+        if (Altitude * 1.5 > GetProperAltitudeForDestination())
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    double GetProperAltitudeForDestination()
+    {
+        // show proper altitude (by 1nm = 300ft rule)
+        double distance_to_destination = GetDistanceFromDestinationInNm();
+
+        if (distance_to_destination <= 0.0)
+            return 0.0;
+
+        return distance_to_destination * 3 * 100;
     }
 
     double CalculateDistanceInNm(CPosition point)
