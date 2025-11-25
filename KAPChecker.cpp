@@ -58,6 +58,7 @@ void InitializeFixes()
 		if (fixType == "RUNWAY")
 		{
 			runway_map[fixName] = GetCPositionFromString(fixLatitude, fixLongitude);
+			runway_map[fixName + "-OPPOSITE"] = GetCPositionFromString(fixParts[4], fixParts[5]);
 			continue;
 		}
 	}
@@ -120,6 +121,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	kapinfo.FinalAltitude = FlightPlan.GetFlightPlanData().GetFinalAltitude();
 	kapinfo.Heading = RadarTarget.GetTrackHeading();
 	kapinfo.GroundSpeed = RadarTarget.GetGS();
+	kapinfo.VerticalSpeed = RadarTarget.GetVerticalSpeed();
 	kapinfo.DepartureAirport = FlightPlan.GetFlightPlanData().GetOrigin();
 	kapinfo.DepartureRunway = FlightPlan.GetFlightPlanData().GetDepartureRwy();
 	kapinfo.DestinationAirport = FlightPlan.GetFlightPlanData().GetDestination();
@@ -676,11 +678,15 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		return;
 	}
 
-	if (flightType == DEPARTED)
+	if (flightType == DEPARTURE_ROLLING)
 	{
 	}
 
-	if (flightType >= CRUSING)
+	if (flightType == CLIMBING)
+	{
+	}
+
+	if (flightType >= CRUISING)
 	{
 		double properAltitude = kapinfo.GetProperAltitudeForDestination();
 		if (kapinfo.NeedExpeditedDescent())
@@ -703,10 +709,28 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "CLRD_APPR");
 			return;
 		}
+	}
+
+	if (flightType >= APPROACHING)
+	{
 		if (kapinfo.Altitude < 4000 && FlightPlan.GetTrackingControllerIsMe())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "CLRD_LAND");
 			return;
 		}
+	}
+
+	if (flightType == LANDING_ROLLING)
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "SAY_TAXI");
+		return;
+	}
+
+	if (flightType == TAXI_TO_GATE)
+	{
+	}
+
+	if (flightType == PARKED_AT_GATE)
+	{
 	}
 }

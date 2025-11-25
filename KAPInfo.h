@@ -9,12 +9,14 @@ unordered_map<std::string, CPosition> runway_map;
 #define PUSHBACK 2
 #define TAXI_TO_RUNWAY 3
 #define READY_FOR_DEP 4
-#define DEPARTED 5
-#define CRUSING 6
-#define ARRIVAL 7
-#define APPROACHING 8
-#define TAXI_TO_GATE 9
-#define PARKED_AT_GATE 10
+#define DEPARTURE_ROLLING 5
+#define CLIMBING 6
+#define CRUISING 7
+#define ARRIVAL 8
+#define APPROACHING 9
+#define LANDING_ROLLING 10
+#define TAXI_TO_GATE 11
+#define PARKED_AT_GATE 12
 
 class CKAPInfo
 {
@@ -26,6 +28,7 @@ public:
     int FinalAltitude;
     double Heading;
     double GroundSpeed;
+    int VerticalSpeed;
     bool isVFR;
     string PlanSquawk;
     string CurrentSquawk;
@@ -57,7 +60,7 @@ public:
 
             if (IsAirborne())
             {
-                return DEPARTED;
+                return CLIMBING;
             }
 
             // check 0.15 nm in departure runway
@@ -76,6 +79,11 @@ public:
 
             if (IsMoving())
             {
+                if (IsOnDepartureRunway())
+                {
+                    return DEPARTURE_ROLLING;
+                }
+
                 return TAXI_TO_RUNWAY;
             }
 
@@ -85,6 +93,11 @@ public:
         {
             if (!IsAirborne())
             {
+                if (IsOnDestinationRunway())
+                {
+                    return LANDING_ROLLING;
+                }
+
                 if (IsMoving())
                 {
                     return TAXI_TO_GATE;
@@ -97,11 +110,13 @@ public:
             {
                 return APPROACHING;
             }
+
             if (Altitude < 20000)
             {
                 return ARRIVAL;
             }
-            return CRUSING;
+            
+            return CRUISING;
         }
 
         return UNKNOWN;
@@ -120,14 +135,18 @@ public:
             return "TAXI_TO_RUNWAY";
         case READY_FOR_DEP:
             return "READY_FOR_DEP";
-        case DEPARTED:
-            return "DEPARTED";
-        case CRUSING:
-            return "CRUSING";
+        case DEPARTURE_ROLLING:
+            return "DEPARTURE_ROLLING";
+        case CLIMBING:
+            return "CLIMBING";
+        case CRUISING:
+            return "CRUISING";
         case ARRIVAL:
             return "ARRIVAL";
         case APPROACHING:
             return "APPROACHING";
+        case LANDING_ROLLING:
+            return "LANDING_ROLLING";
         case TAXI_TO_GATE:
             return "TAXI_TO_GATE";
         case PARKED_AT_GATE:
@@ -139,7 +158,7 @@ public:
 
     bool IsAirborne()
     {
-        if (GroundSpeed > 60)
+        if (GroundSpeed > 60 && VerticalSpeed > 50)
             return true;
         return false;
     }
@@ -156,6 +175,62 @@ public:
         if (DestinationAirport.find("RK") == 0)
             return true;
         return false;
+    }
+
+    bool IsOnDepartureRunway()
+    {
+        return (DistanceMyLocationFromRunway(DepartureAirport, DepartureRunway) < 0.001);
+    }
+
+    bool IsOnDestinationRunway()
+    {
+        return (DistanceMyLocationFromRunway(DestinationAirport, DestinationRunway) < 0.001);
+    }
+
+    double DistanceMyLocationFromRunway(const string &airport, const string &runway)
+    {
+        string runwayName = airport + "-" + runway;
+
+        if (!runway_map.contains(runwayName))
+        {
+            return 100000.0;
+        }
+
+        CPosition runwayPos = runway_map[runwayName];
+        CPosition runwayOppositePos = runway_map[runwayName + "-OPPOSITE"];
+
+        double px = Longitude;
+        double py = Latitude;
+
+        double x1 = runwayPos.m_Longitude;
+        double y1 = runwayPos.m_Latitude;
+        double x2 = runwayOppositePos.m_Longitude;
+        double y2 = runwayOppositePos.m_Latitude;
+
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+        double segLen2 = dx * dx + dy * dy;
+
+        if (segLen2 == 0.0)
+        {
+            return hypot(px - x1, py - y1);
+        }
+
+        double t = ((px - x1) * dx + (py - y1) * dy) / segLen2;
+
+        if (t < 0.0)
+        {
+            return hypot(px - x1, py - y1);
+        }
+        else if (t > 1.0)
+        {
+            return hypot(px - x2, py - y2);
+        }
+
+        double projX = x1 + t * dx;
+        double projY = y1 + t * dy;
+
+        return hypot(px - projX, py - projY);
     }
 
     static bool PointInPolygon(const std::vector<std::pair<double, double>> &poly, double x, double y)

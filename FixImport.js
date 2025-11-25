@@ -26,8 +26,8 @@ async function generate() {
 ${boundary_navaids.map(navaid => `"FIR_BOUNDARY:${navaid.name}:${navaid.latitude}:${navaid.longitude}",`).join("\n")}
 ${mapped_navaids.map(navaid => `"FIX:${navaid.name}:${navaid.latitude}:${navaid.longitude}",`).join("\n")}
 ${Object.values(airport).map(a => `"AIRPORT:${a.icaoCode}:${a.latitude}:${a.longitude}",`).join("\n")}
-${runway.map(navaid => `"RUNWAY:${navaid.airport}-${navaid.runway}:${navaid.startLatitude}:${navaid.startLongitude}",`).join("\n")}
-${runway.map(navaid => `"RUNWAY:${navaid.airport}-${navaid.oppositeRunway}:${navaid.endLatitude}:${navaid.endLongitude}",`).join("\n")}
+${runway.map(navaid => `"RUNWAY:${navaid.airport}-${navaid.runway}:${navaid.startLatitude}:${navaid.startLongitude}:${navaid.endLatitude}:${navaid.endLongitude}",`).join("\n")}
+${runway.map(navaid => `"RUNWAY:${navaid.airport}-${navaid.oppositeRunway}:${navaid.endLatitude}:${navaid.endLongitude}:${navaid.startLatitude}:${navaid.startLongitude}",`).join("\n")}
 ""};`);
 }
 
