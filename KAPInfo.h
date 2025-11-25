@@ -1,12 +1,20 @@
+// global fix maps
+unordered_map<std::string, CPosition> fir_boundary_fix_map;
+unordered_map<std::string, CPosition> fix_map;
+unordered_map<std::string, CPosition> airport_map;
+unordered_map<std::string, CPosition> runway_map;
+
 #define UNKNOWN 0
-#define BEFORE_DEPARTURE 1
-#define GROUND_MOVING 2
-#define DEPARTED 3
-#define CRUSING 4
-#define ARRIVAL 5
-#define APPROACHING 6
-#define TAXI_TO_GATE 7
-#define PARKED_AT_GATE 8
+#define CLEARANCE 1
+#define PUSHBACK 2
+#define TAXI_TO_RUNWAY 3
+#define READY_FOR_DEP 4
+#define DEPARTED 5
+#define CRUSING 6
+#define ARRIVAL 7
+#define APPROACHING 8
+#define TAXI_TO_GATE 9
+#define PARKED_AT_GATE 10
 
 class CKAPInfo
 {
@@ -19,6 +27,8 @@ public:
     double Heading;
     double GroundSpeed;
     bool isVFR;
+    string PlanSquawk;
+    string CurrentSquawk;
     bool isSquawkModeC;
     string DepartureAirport;
     string DepartureRunway;
@@ -26,12 +36,25 @@ public:
     string DestinationRunway;
     string Route;
 
+    CPosition MyPosition()
+    {
+        CPosition pos;
+        pos.m_Latitude = Latitude;
+        pos.m_Longitude = Longitude;
+        return pos;
+    }
+
     int GetTypeOfFlight()
     {
         bool isCloserToDeparture = isCloserToDepartureThanArrival();
 
         if (isCloserToDeparture)
         {
+            if (PlanSquawk == "" || PlanSquawk == "0000")
+            {
+                return CLEARANCE;
+            }
+
             if (IsAirborne())
             {
                 return DEPARTED;
@@ -39,10 +62,24 @@ public:
 
             if (IsMoving())
             {
-                return GROUND_MOVING;
+                return TAXI_TO_RUNWAY;
             }
 
-            return BEFORE_DEPARTURE;
+            // check 0.15 nm in departure runway
+            string AirportAndDepartureRunway = DepartureAirport + "-" + DepartureRunway;
+            if (runway_map.contains(AirportAndDepartureRunway))
+            {
+                CPosition runwayPos = runway_map[AirportAndDepartureRunway];
+                CPosition mylocation = MyPosition();
+
+                double distanceToRunway = mylocation.DistanceTo(runwayPos);
+                if (distanceToRunway < 0.13)
+                {
+                    return READY_FOR_DEP;
+                }
+            }
+
+            return PUSHBACK;
         }
         else
         {
@@ -75,10 +112,14 @@ public:
         int type = GetTypeOfFlight();
         switch (type)
         {
-        case BEFORE_DEPARTURE:
-            return "BEFORE_DEPARTURE";
-        case GROUND_MOVING:
-            return "GROUND_MOVING";
+        case CLEARANCE:
+            return "CLEARANCE";
+        case PUSHBACK:
+            return "PUSHBACK";
+        case TAXI_TO_RUNWAY:
+            return "TAXI_TO_RUNWAY";
+        case READY_FOR_DEP:
+            return "READY_FOR_DEP";
         case DEPARTED:
             return "DEPARTED";
         case CRUSING:
@@ -140,9 +181,7 @@ public:
 
         CPosition departurePos = airport_map[DepartureAirport];
         CPosition arrivalPos = airport_map[DestinationAirport];
-        CPosition mylocation;
-        mylocation.m_Latitude = Latitude;
-        mylocation.m_Longitude = Longitude;
+        CPosition mylocation = MyPosition();
 
         double distanceToDeparture = mylocation.DistanceTo(departurePos);
         double distanceToArrival = mylocation.DistanceTo(arrivalPos);
@@ -305,9 +344,7 @@ public:
 
     double CalculateDistanceInNm(CPosition point)
     {
-        CPosition mylocation;
-        mylocation.m_Latitude = Latitude;
-        mylocation.m_Longitude = Longitude;
+        CPosition mylocation = MyPosition();
 
         return mylocation.DistanceTo(point);
     }

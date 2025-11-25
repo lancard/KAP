@@ -1,5 +1,5 @@
 #pragma once
-#define PROGRAM_VERSION "3.0.1"
+#define PROGRAM_VERSION "3.0.2"
 #include <SDKDDKVer.h>
 #include <afxwin.h>
 #include <string>
@@ -15,7 +15,8 @@ public:
 	CKAPChecker();
 	~CKAPChecker();
 
-	const int TAG_ITEM_RKRR = 7527;
+	const int TAG_ITEM_KAP_RKRR = 7527;
+	const int TAG_ITEM_KAP_STATUS = 7528;
 
 	void OnGetTagItem(CFlightPlan FlightPlan, EuroScopePlugIn::CRadarTarget RadarTarget,
 					  int ItemCode,

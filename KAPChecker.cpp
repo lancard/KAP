@@ -1,14 +1,66 @@
 #include "KAPChecker.h"
-extern unordered_map<std::string, CPosition> fir_boundary_fix_map;
-extern unordered_map<std::string, CPosition> fix_map;
-extern unordered_map<std::string, CPosition> airport_map;
-CPosition GetCPositionFromString(const string& latitude, const string& longitude);
-void InitializeFirBoundaryFixes();
-void InitializeFixes();
-void InitializeAirports();
 #include "KAPInfo.h"
+#include "KAPFixes.h"
 
 #define RGB_YELLOW RGB(255, 255, 0)
+
+CPosition GetCPositionFromString(const string &latitude, const string &longitude)
+{
+	CPosition pos;
+	pos.LoadFromStrings(longitude.c_str(), latitude.c_str());
+	return pos;
+}
+
+vector<string> split(const string &str, const string &delim)
+{
+	vector<string> result;
+	size_t start = 0, pos;
+	while ((pos = str.find(delim, start)) != string::npos)
+	{
+		result.push_back(str.substr(start, pos - start));
+		start = pos + delim.size();
+	}
+	result.push_back(str.substr(start));
+	return result;
+}
+
+void InitializeFixes()
+{
+	for (const char *f : fix_list)
+	{
+		string fix = f;
+
+		vector<string> fixParts = split(fix, ":");
+		if (fixParts.size() < 4)
+			continue;
+
+		string fixType = fixParts[0];
+		string fixName = fixParts[1];
+		string fixLatitude = fixParts[2];
+		string fixLongitude = fixParts[3];
+
+		if (fixType == "FIR_BOUNDARY")
+		{
+			fir_boundary_fix_map[fixName] = GetCPositionFromString(fixLatitude, fixLongitude);
+			continue;
+		}
+		if (fixType == "FIX")
+		{
+			fix_map[fixName] = GetCPositionFromString(fixLatitude, fixLongitude);
+			continue;
+		}
+		if (fixType == "AIRPORT")
+		{
+			airport_map[fixName] = GetCPositionFromString(fixLatitude, fixLongitude);
+			continue;
+		}
+		if (fixType == "RUNWAY")
+		{
+			runway_map[fixName] = GetCPositionFromString(fixLatitude, fixLongitude);
+			continue;
+		}
+	}
+}
 
 CKAPChecker::CKAPChecker(void) : CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 										 "KAP",
@@ -16,11 +68,10 @@ CKAPChecker::CKAPChecker(void) : CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 										 "Sung-ho Kim",
 										 "Sung-ho Kim")
 {
-	InitializeFirBoundaryFixes();
 	InitializeFixes();
-	InitializeAirports();
 
-	RegisterTagItemType("RKRR_Checker", TAG_ITEM_RKRR);
+	RegisterTagItemType("RKRR_Checker", TAG_ITEM_KAP_RKRR);
+	RegisterTagItemType("RKRR_Checker_Status", TAG_ITEM_KAP_STATUS);
 
 	DisplayUserMessage("Message", "KAP", std::string("KAP Loaded.").c_str(), false, false, false, false, false);
 }
@@ -53,9 +104,6 @@ void CKAPChecker::setTag(char *target, int *targetColorCode, COLORREF *targetCol
 void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget, int ItemCode, int TagData,
 							   char sItemString[16], int *pColorCode, COLORREF *pRGB, double *pFontSize)
 {
-	if (ItemCode != TAG_ITEM_RKRR)
-		return;
-
 	if (!FlightPlan.IsValid())
 		return;
 
@@ -77,11 +125,19 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	kapinfo.DestinationRunway = FlightPlan.GetFlightPlanData().GetArrivalRwy();
 	kapinfo.Route = FlightPlan.GetFlightPlanData().GetRoute();
 	kapinfo.isVFR = (FlightPlan.GetFlightPlanData().GetPlanType() == "V");
+	kapinfo.PlanSquawk = FlightPlan.GetControllerAssignedData().GetSquawk();
+	kapinfo.CurrentSquawk = RadarTarget.GetPosition().GetSquawk();
 	kapinfo.isSquawkModeC = RadarTarget.GetPosition().GetTransponderC();
 
-	string flightTypeString = kapinfo.GetTypeOfFlightString();
-	setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", flightTypeString.c_str());
-	return;
+	if (ItemCode == TAG_ITEM_KAP_STATUS)
+	{
+		string flightTypeString = kapinfo.GetTypeOfFlightString();
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", flightTypeString.c_str());
+		return;
+	}
+
+	if (ItemCode != TAG_ITEM_KAP_RKRR)
+		return;
 
 	// check all!
 	if (kapinfo.IsAirborne() && !kapinfo.isSquawkModeC)

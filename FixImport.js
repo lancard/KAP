@@ -13,6 +13,8 @@ async function generate() {
     });
     const airport_raw = await fetch(`https://raw.githubusercontent.com/lancard/korea-flight-database/refs/heads/master/database/airport.json`);
     const airport = await airport_raw.json();
+    const runway_raw = await fetch(`https://raw.githubusercontent.com/lancard/korea-flight-database/refs/heads/master/database/runway.json`);
+    const runway = await runway_raw.json();
 
 
     const boundary_navaids = mapped_navaids.filter(navaid => boundary_fix_names.includes(navaid.name));
@@ -20,30 +22,13 @@ async function generate() {
 
     // print fir boundary fix list
     console.log(
-        `
-unordered_map<std::string, CPosition> fir_boundary_fix_map;
-unordered_map<std::string, CPosition> fix_map;
-unordered_map<std::string, CPosition> airport_map;
-
-CPosition GetCPositionFromString(const string& latitude, const string& longitude) {
-    CPosition pos;
-    pos.LoadFromStrings(longitude.c_str(), latitude.c_str());
-    return pos;
-}
-
-void InitializeFirBoundaryFixes() {
-${boundary_navaids.map(navaid => `    fir_boundary_fix_map["${navaid.name}"] = GetCPositionFromString("${navaid.latitude}", "${navaid.longitude}");`).join("\n")}
-}    
-
-void InitializeFixes() {
-${mapped_navaids.map(navaid => `    fix_map["${navaid.name}"] = GetCPositionFromString("${navaid.latitude}", "${navaid.longitude}");`).join("\n")}
-}
-
-void InitializeAirports() {
-${Object.values(airport).map(a => `    airport_map["${a.icaoCode}"] = GetCPositionFromString("${a.latitude}", "${a.longitude}");`).join("\n")}
-}
-`
-    );
+`const char *fix_list[] = {
+${boundary_navaids.map(navaid => `"FIR_BOUNDARY:${navaid.name}:${navaid.latitude}:${navaid.longitude}",`).join("\n")}
+${mapped_navaids.map(navaid => `"FIX:${navaid.name}:${navaid.latitude}:${navaid.longitude}",`).join("\n")}
+${Object.values(airport).map(a => `"AIRPORT:${a.icaoCode}:${a.latitude}:${a.longitude}",`).join("\n")}
+${runway.map(navaid => `"RUNWAY:${navaid.airport}-${navaid.runway}:${navaid.startLatitude}:${navaid.startLongitude}",`).join("\n")}
+${runway.map(navaid => `"RUNWAY:${navaid.airport}-${navaid.oppositeRunway}:${navaid.endLatitude}:${navaid.endLongitude}",`).join("\n")}
+""};`);
 }
 
 generate();
