@@ -703,5 +703,10 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "CLRD_APPR");
 			return;
 		}
+		if (kapinfo.Altitude < 4000 && FlightPlan.GetTrackingControllerIsMe())
+		{
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "CLRD_LAND");
+			return;
+		}
 	}
 }
