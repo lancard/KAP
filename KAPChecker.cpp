@@ -25,6 +25,314 @@ vector<string> split(const string &str, const string &delim)
 	return result;
 }
 
+string GetApproachAdvisory(CKAPInfo &kapinfo)
+{
+	if (kapinfo.DestinationAirport == "RKSI")
+	{
+		if (kapinfo.DestinationRunway == "15L" || kapinfo.DestinationRunway == "15R")
+		{
+			if (kapinfo.Star.find("BITIM") != string::npos)
+			{
+				return "BITIM30";
+			}
+
+			return "MUNAN30";
+		}
+		if (kapinfo.DestinationRunway == "16L" || kapinfo.DestinationRunway == "16R")
+		{
+			if (kapinfo.Star.find("BITIM") != string::npos)
+			{
+				return "BITIM30";
+			}
+
+			return "MUNAN20";
+		}
+		if (kapinfo.DestinationRunway == "33L" || kapinfo.DestinationRunway == "33R")
+		{
+			if (kapinfo.Star.find("PAMBI") != string::npos)
+			{
+				return "PAMBI36";
+			}
+
+			return "ENPIL70";
+		}
+		if (kapinfo.DestinationRunway == "34L" || kapinfo.DestinationRunway == "34R")
+		{
+			if (kapinfo.Star.find("PAMBI") != string::npos)
+			{
+				return "PAMBI26";
+			}
+
+			return "ENPIL70";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKSS")
+	{
+		if (kapinfo.DestinationRunway == "14L" || kapinfo.DestinationRunway == "14R")
+		{
+			return "DOKDO40";
+		}
+		if (kapinfo.DestinationRunway == "32L" || kapinfo.DestinationRunway == "32R")
+		{
+			return "WONKO40";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKPC")
+	{
+		if (kapinfo.DestinationRunway == "07")
+		{
+			return "YUMIN40";
+		}
+		if (kapinfo.DestinationRunway == "25")
+		{
+			return "DUKAL40";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKPK")
+	{
+		if (kapinfo.DestinationRunway == "36L")
+		{
+			return "AKEVI33";
+		}
+		if (kapinfo.DestinationRunway == "36R")
+		{
+			return "BOSPI33";
+		}
+		if (kapinfo.DestinationRunway == "18L" || kapinfo.DestinationRunway == "18R")
+		{
+			if (kapinfo.Star.find("RNP") != string::npos)
+			{
+				return "NOORI40";
+			}
+			return "OVLIN40";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKTU")
+	{
+		if (kapinfo.DestinationRunway == "06L")
+		{
+			return "BAKJO44";
+		}
+		if (kapinfo.DestinationRunway == "24L")
+		{
+			return "IKAPO70";
+		}
+		if (kapinfo.DestinationRunway == "24R")
+		{
+			return "HYEIN60";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKNY")
+	{
+		if (kapinfo.DestinationRunway == "33")
+		{
+			return "DUBUN60";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKTN")
+	{
+		if (kapinfo.DestinationRunway == "13R")
+		{
+			return "YAWAN60";
+		}
+		if (kapinfo.DestinationRunway == "31L" || kapinfo.DestinationRunway == "31R")
+		{
+			return "UKBAT60";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKJB")
+	{
+		if (kapinfo.DestinationRunway == "01")
+		{
+			if (kapinfo.Star.find("OVGEN") != string::npos)
+			{
+				return "OVGEN50";
+			}
+			if (kapinfo.Star.find("PEGRO") != string::npos)
+			{
+				return "PEGRO50";
+			}
+			return "OLBES60";
+		}
+		if (kapinfo.DestinationRunway == "19")
+		{
+			if (kapinfo.Star.find("DOWAN") != string::npos)
+			{
+				return "DOWAN50";
+			}
+			return "AYEON50";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKJJ")
+	{
+		if (kapinfo.DestinationRunway == "04R")
+		{
+			return "KOTTY40";
+		}
+		if (kapinfo.DestinationRunway == "22L")
+		{
+			return "JADOO70";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKJK")
+	{
+		if (kapinfo.DestinationRunway == "18")
+		{
+			return "BLAZZ30";
+		}
+		if (kapinfo.DestinationRunway == "36")
+		{
+			return "VIPIR30";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKJY")
+	{
+		if (kapinfo.DestinationRunway == "17")
+		{
+			if (kapinfo.Star.find("YEONA") != string::npos)
+			{
+				return "YEONA50";
+			}
+			return "SKOTA50";
+		}
+		if (kapinfo.DestinationRunway == "35")
+		{
+			return "SOONA40";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKNW")
+	{
+		if (kapinfo.DestinationRunway == "21")
+		{
+			return "VEMPU60";
+		}
+		if (kapinfo.DestinationRunway == "03")
+		{
+			return "ORINU50";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKPS")
+	{
+		if (kapinfo.DestinationRunway == "06L" || kapinfo.DestinationRunway == "06R")
+		{
+			return "SOLYI60";
+		}
+		if (kapinfo.DestinationRunway == "24R" || kapinfo.DestinationRunway == "24L")
+		{
+			return "KABVO50";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKPU")
+	{
+		if (kapinfo.DestinationRunway == "18")
+		{
+			return "MAKKY50";
+		}
+		if (kapinfo.DestinationRunway == "36")
+		{
+			return "HAEGU50";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKSM")
+	{
+		if (kapinfo.DestinationRunway == "19" || kapinfo.DestinationRunway == "20")
+		{
+			return "Z-NITEX70/Y-BAVIX70";
+		}
+		if (kapinfo.DestinationRunway == "01")
+		{
+			return "UNTOM32";
+		}
+		if (kapinfo.DestinationRunway == "02")
+		{
+			return "SANIB32";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKTH")
+	{
+		if (kapinfo.DestinationRunway == "10")
+		{
+			return "POSCO50";
+		}
+		if (kapinfo.DestinationRunway == "28")
+		{
+			return "SABUM30";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKTL")
+	{
+		if (kapinfo.DestinationRunway == "17")
+		{
+			return "ALDON60";
+		}
+		if (kapinfo.DestinationRunway == "35")
+		{
+			return "BANYA60";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKPD")
+	{
+		if (kapinfo.DestinationRunway == "01")
+		{
+			return "BIGTU38";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "RKTA")
+	{
+		if (kapinfo.DestinationRunway == "15")
+		{
+			return "BACKA40";
+		}
+		if (kapinfo.DestinationRunway == "33")
+		{
+			return "KWANG40";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "ZKPY")
+	{
+		if (kapinfo.DestinationRunway == "35")
+		{
+			return "PY42330";
+		}
+		if (kapinfo.DestinationRunway == "17")
+		{
+			return "PY43224";
+		}
+	}
+
+	if (kapinfo.DestinationAirport == "ZKWS")
+	{
+		if (kapinfo.DestinationRunway == "15L")
+		{
+			return "KM41426";
+		}
+		if (kapinfo.DestinationRunway == "31L" || kapinfo.DestinationRunway == "31R")
+		{
+			return "KM50430";
+		}
+	}
+	return "";
+}
+
 void InitializeFixes()
 {
 	for (const char *f : fix_list)
@@ -72,8 +380,9 @@ CKAPChecker::CKAPChecker(void) : CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 {
 	InitializeFixes();
 
-	RegisterTagItemType("RKRR_Checker", TAG_ITEM_KAP_RKRR);
-	RegisterTagItemType("RKRR_Checker_Status", TAG_ITEM_KAP_STATUS);
+	RegisterTagItemType("Checker", TAG_ITEM_KAP_RKRR);
+	RegisterTagItemType("Flight Status", TAG_ITEM_KAP_STATUS);
+	RegisterTagItemType("Approach Advisory", TAG_ITEM_KAP_APP_ADVISORY);
 
 	DisplayUserMessage("Message", "KAP", std::string("KAP Loaded.").c_str(), false, false, false, false, false);
 }
@@ -124,8 +433,10 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	kapinfo.VerticalSpeed = RadarTarget.GetVerticalSpeed();
 	kapinfo.DepartureAirport = FlightPlan.GetFlightPlanData().GetOrigin();
 	kapinfo.DepartureRunway = FlightPlan.GetFlightPlanData().GetDepartureRwy();
+	kapinfo.Sid = FlightPlan.GetFlightPlanData().GetSidName();
 	kapinfo.DestinationAirport = FlightPlan.GetFlightPlanData().GetDestination();
 	kapinfo.DestinationRunway = FlightPlan.GetFlightPlanData().GetArrivalRwy();
+	kapinfo.Star = FlightPlan.GetFlightPlanData().GetStarName();
 	kapinfo.Route = FlightPlan.GetFlightPlanData().GetRoute();
 	kapinfo.isVFR = (FlightPlan.GetFlightPlanData().GetPlanType() == "V");
 	kapinfo.PlanSquawk = FlightPlan.GetControllerAssignedData().GetSquawk();
@@ -136,6 +447,13 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		string flightTypeString = kapinfo.GetTypeOfFlightString();
 		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_BLUE, "%s", flightTypeString.c_str());
+		return;
+	}
+
+	if (ItemCode == TAG_ITEM_KAP_APP_ADVISORY)
+	{
+		string advisory = GetApproachAdvisory(kapinfo);
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", advisory.c_str());
 		return;
 	}
 
@@ -694,12 +1012,6 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "DES:%.0f", properAltitude / 100.0);
 			return;
 		}
-
-		if (kapinfo.NeedDescent())
-		{
-			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "DES:%.0f", properAltitude / 100.0);
-			return;
-		}
 	}
 
 	if (flightType == ARRIVAL)
@@ -732,5 +1044,21 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	if (flightType == PARKED_AT_GATE)
 	{
+	}
+
+	// -- advisorys ----------------------------------------------------------------
+	if (flightType >= CRUISING)
+	{
+		string advisory = "";
+
+		// show IAF altitude
+		if (kapinfo.NeedDescent())
+		{
+			// double to int conversion to avoid precision issue
+			int properAltitude = (int)(kapinfo.GetProperAltitudeForDestination() / 100.0);
+			advisory += "DES:" + to_string(properAltitude);
+		}
+
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", advisory.c_str());
 	}
 }

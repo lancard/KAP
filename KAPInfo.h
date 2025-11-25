@@ -35,8 +35,10 @@ public:
     bool isSquawkModeC;
     string DepartureAirport;
     string DepartureRunway;
+    string Sid;
     string DestinationAirport;
     string DestinationRunway;
+    string Star;
     string Route;
 
     CPosition MyPosition()
@@ -115,7 +117,7 @@ public:
             {
                 return ARRIVAL;
             }
-            
+
             return CRUISING;
         }
 

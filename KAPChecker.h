@@ -1,5 +1,5 @@
 #pragma once
-#define PROGRAM_VERSION "3.2.0"
+#define PROGRAM_VERSION "3.3.0"
 #include <SDKDDKVer.h>
 #include <afxwin.h>
 #include <string>
@@ -17,6 +17,7 @@ public:
 
 	const int TAG_ITEM_KAP_RKRR = 7527;
 	const int TAG_ITEM_KAP_STATUS = 7528;
+	const int TAG_ITEM_KAP_APP_ADVISORY = 7529;
 
 	void OnGetTagItem(CFlightPlan FlightPlan, EuroScopePlugIn::CRadarTarget RadarTarget,
 					  int ItemCode,
