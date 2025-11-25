@@ -151,6 +151,13 @@ public:
         return false;
     }
 
+    bool IsDestinationRKRR()
+    {
+        if (DestinationAirport.find("RK") == 0)
+            return true;
+        return false;
+    }
+
     static bool PointInPolygon(const std::vector<std::pair<double, double>> &poly, double x, double y)
     {
         bool inside = false;
@@ -286,8 +293,6 @@ public:
         if (HasRoute("Y711"))
             return true;
         if (HasRoute("Y572"))
-            return true;
-        if (HasRoute("Y697"))
             return true;
         if (HasRoute("Z53"))
             return true;

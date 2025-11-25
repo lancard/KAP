@@ -3,6 +3,7 @@
 #include "KAPFixes.h"
 
 #define RGB_YELLOW RGB(255, 255, 0)
+#define RGB_BLUE RGB(0, 0, 255)
 
 CPosition GetCPositionFromString(const string &latitude, const string &longitude)
 {
@@ -132,7 +133,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	if (ItemCode == TAG_ITEM_KAP_STATUS)
 	{
 		string flightTypeString = kapinfo.GetTypeOfFlightString();
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", flightTypeString.c_str());
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_BLUE, "%s", flightTypeString.c_str());
 		return;
 	}
 
@@ -627,7 +628,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		return;
 	}
 
-	if (!kapinfo.isVFR && kapinfo.DestinationRunway.empty())
+	if (!kapinfo.isVFR && kapinfo.IsDestinationRKRR() && kapinfo.DestinationRunway.empty())
 	{
 		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
 		return;
