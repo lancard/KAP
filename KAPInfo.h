@@ -40,6 +40,7 @@ public:
     string DestinationRunway;
     string Star;
     string Route;
+    string ScratchPadString;
 
     CPosition MyPosition()
     {

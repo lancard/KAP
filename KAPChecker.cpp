@@ -428,6 +428,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	kapinfo.PlanSquawk = FlightPlan.GetControllerAssignedData().GetSquawk();
 	kapinfo.CurrentSquawk = RadarTarget.GetPosition().GetSquawk();
 	kapinfo.isSquawkModeC = RadarTarget.GetPosition().GetTransponderC();
+	kapinfo.ScratchPadString = FlightPlan.GetControllerAssignedData().GetScratchPadString();
 	int flightType = kapinfo.GetTypeOfFlight();
 
 	if (ItemCode == TAG_ITEM_KAP_STATUS)
@@ -988,6 +989,12 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	if (flightType == CLIMBING)
 	{
+		// check scratch pad is empty
+		if (!kapinfo.ScratchPadString.empty())
+		{
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "CLR_SCRATCH");
+			return;
+		}
 	}
 
 	if (flightType == ARRIVAL)
