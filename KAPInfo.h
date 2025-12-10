@@ -160,7 +160,7 @@ public:
 
     bool IsAirborne()
     {
-        if (GroundSpeed > 60 && VerticalSpeed > 50)
+        if (GroundSpeed > 60 || VerticalSpeed > 50)
             return true;
         return false;
     }
@@ -377,11 +377,15 @@ public:
             return true;
         if (HasRoute("KALEK Z84"))
             return true;
-        if (HasRoute("G597 AGAVO"))
-            return true;
         if (HasRoute("TOSAN Y572"))
             return true;
         if (HasRoute("TOSAN A586"))
+            return true;
+        if (HasRoute("ANSIM G597 AGAVO"))
+            return true;
+        if (HasRoute("NOPIK G597 AGAVO"))
+            return true;
+        if (HasRoute("BINIL G597 AGAVO"))
             return true;
         if (HasRoute("LIMDI Y677 TOLIS"))
             return true;

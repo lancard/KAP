@@ -31,20 +31,10 @@ string GetApproachAdvisory(CKAPInfo &kapinfo)
 	{
 		if (kapinfo.DestinationRunway == "15L" || kapinfo.DestinationRunway == "15R")
 		{
-			if (kapinfo.Star.find("BITIM") != string::npos)
-			{
-				return "BITIM30";
-			}
-
 			return "MUNAN30";
 		}
 		if (kapinfo.DestinationRunway == "16L" || kapinfo.DestinationRunway == "16R")
 		{
-			if (kapinfo.Star.find("BITIM") != string::npos)
-			{
-				return "BITIM30";
-			}
-
 			return "MUNAN20";
 		}
 		if (kapinfo.DestinationRunway == "33L" || kapinfo.DestinationRunway == "33R")
@@ -103,10 +93,6 @@ string GetApproachAdvisory(CKAPInfo &kapinfo)
 		}
 		if (kapinfo.DestinationRunway == "18L" || kapinfo.DestinationRunway == "18R")
 		{
-			if (kapinfo.Star.find("RNP") != string::npos)
-			{
-				return "NOORI40";
-			}
 			return "OVLIN40";
 		}
 	}
@@ -442,6 +428,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	kapinfo.PlanSquawk = FlightPlan.GetControllerAssignedData().GetSquawk();
 	kapinfo.CurrentSquawk = RadarTarget.GetPosition().GetSquawk();
 	kapinfo.isSquawkModeC = RadarTarget.GetPosition().GetTransponderC();
+	int flightType = kapinfo.GetTypeOfFlight();
 
 	if (ItemCode == TAG_ITEM_KAP_STATUS)
 	{
@@ -452,8 +439,14 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	if (ItemCode == TAG_ITEM_KAP_APP_ADVISORY)
 	{
-		string advisory = GetApproachAdvisory(kapinfo);
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", advisory.c_str());
+		if (flightType == CRUISING || flightType == ARRIVAL || flightType == APPROACHING)
+		{
+			if (!kapinfo.isCloserToDepartureThanArrival() && !kapinfo.IsClearedApproach() && !kapinfo.IsClearedVisualApproach())
+			{
+				string advisory = GetApproachAdvisory(kapinfo);
+				setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", advisory.c_str());
+			}
+		}
 		return;
 	}
 
@@ -953,9 +946,6 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
 		return;
 	}
-
-	// check restrictions by type
-	int flightType = kapinfo.GetTypeOfFlight();
 
 	if (flightType == CLEARANCE)
 	{
