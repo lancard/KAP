@@ -465,7 +465,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	if (FlightPlan.GetTrackingControllerIsMe())
 	{
 		// near AGAVO
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["AGAVO"]) < 50.0 && kapinfo.IsWestBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["AGAVO"]) < 40.0 && kapinfo.IsWestBoundFlying())
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -533,7 +533,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near GOLOT
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["GOLOT"]) < 50.0 && kapinfo.IsWestBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["GOLOT"]) < 40.0 && kapinfo.IsWestBoundFlying())
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -601,7 +601,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near TOMUK
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["TOMUK"]) < 50.0 && kapinfo.IsWestBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["TOMUK"]) < 40.0 && kapinfo.IsWestBoundFlying())
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -669,7 +669,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near VASRO
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["VASRO"]) < 50.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["VASRO"]) < 40.0 && kapinfo.IsNorthBoundFlying())
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -732,7 +732,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near LAMEN
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["LAMEN"]) < 50.0 && kapinfo.IsWestBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["LAMEN"]) < 40.0 && kapinfo.IsWestBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "ZSPD" ||
 				kapinfo.DestinationAirport == "ZSSS" ||
@@ -761,7 +761,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near ADNUR
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ADNUR"]) < 50.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ADNUR"]) < 40.0 && kapinfo.IsNorthBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "UHWW")
 			{
@@ -775,7 +775,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near RIVAT
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["RIVAT"]) < 50.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["RIVAT"]) < 40.0 && kapinfo.IsNorthBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "UHWW")
 			{
@@ -789,7 +789,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near INVOK
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["INVOK"]) < 50.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["INVOK"]) < 40.0 && kapinfo.IsSouthBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
@@ -802,7 +802,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near APELA
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["APELA"]) < 50.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["APELA"]) < 40.0 && kapinfo.IsSouthBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
@@ -815,7 +815,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near BESNA
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["BESNA"]) < 50.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["BESNA"]) < 40.0 && kapinfo.IsSouthBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
@@ -828,91 +828,91 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near MUGUS
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["MUGUS"]) < 50.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["MUGUS"]) < 40.0 && kapinfo.IsSouthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near ATOTI
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ATOTI"]) < 50.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ATOTI"]) < 40.0 && kapinfo.IsSouthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near P2
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["P2"]) < 50.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["P2"]) < 40.0 && kapinfo.IsNorthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near MESOV
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["MESOV"]) < 50.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["MESOV"]) < 40.0 && kapinfo.IsNorthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near KANSU
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["KANSU"]) < 50.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["KANSU"]) < 40.0 && kapinfo.IsNorthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near ANDOL
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ANDOL"]) < 50.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ANDOL"]) < 40.0 && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near IGRAS
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["IGRAS"]) < 50.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["IGRAS"]) < 40.0 && kapinfo.IsSouthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near LANAT
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["LANAT"]) < 50.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["LANAT"]) < 40.0 && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near SAPRA
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["SAPRA"]) < 50.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["SAPRA"]) < 40.0 && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near KALEK
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["KALEK"]) < 50.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["KALEK"]) < 40.0 && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near SAMDO
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["SAMDO"]) < 50.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["SAMDO"]) < 40.0 && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near RUGMA
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["RUGMA"]) < 50.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["RUGMA"]) < 40.0 && kapinfo.IsSouthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near BEDAR
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["BEDAR"]) < 50.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["BEDAR"]) < 40.0 && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
@@ -1045,6 +1045,6 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			advisory += "DES:" + to_string(properAltitude);
 		}
 
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", advisory.c_str());
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", advisory.c_str());
 	}
 }
