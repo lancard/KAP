@@ -62,7 +62,14 @@ public:
 
             if (IsAirborne())
             {
-                return CLIMBING;
+                if (Altitude < 20000)
+                {
+                    return CLIMBING;
+                }
+                else
+                {
+                    return CRUISING;
+                }
             }
 
             // check 0.15 nm in departure runway

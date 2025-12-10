@@ -461,15 +461,6 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	// check all! -----------------------------------------------------------------------------
 
-	// sq mode check
-	if (kapinfo.IsAirborne() && !kapinfo.isSquawkModeC)
-	{
-		if (flightType < TAXI_TO_GATE)
-		{
-			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "SQ_C");
-		}
-	}
-
 	// meter metric conversion check
 	if (FlightPlan.GetTrackingControllerIsMe())
 	{
@@ -977,8 +968,11 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 		if (!kapinfo.isSquawkModeC)
 		{
-			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "SQ_C");
-			return;
+			if (flightType < TAXI_TO_GATE)
+			{
+				setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "SQ_C");
+				return;
+			}
 		}
 	}
 
