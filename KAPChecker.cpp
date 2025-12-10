@@ -990,16 +990,6 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 	}
 
-	if (flightType >= CRUISING)
-	{
-		double properAltitude = kapinfo.GetProperAltitudeForDestination();
-		if (kapinfo.NeedExpeditedDescent())
-		{
-			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "DES:%.0f", properAltitude / 100.0);
-			return;
-		}
-	}
-
 	if (flightType == ARRIVAL)
 	{
 		if (kapinfo.Altitude < 10000 && !(kapinfo.IsClearedApproach() || kapinfo.IsClearedVisualApproach()))
@@ -1024,6 +1014,10 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		return;
 	}
 
+	if (flightType >= CRUISING)
+	{
+	}
+
 	if (flightType == TAXI_TO_GATE)
 	{
 	}
@@ -1032,19 +1026,20 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 	}
 
-	// -- advisorys ----------------------------------------------------------------
+	// -- advisories ----------------------------------------------------------------
 	if (flightType >= CRUISING)
 	{
-		string advisory = "";
+		double properAltitude = kapinfo.GetProperAltitudeForDestination();
 
-		// show IAF altitude
-		if (kapinfo.NeedDescent())
+		if (kapinfo.NeedExpeditedDescent())
 		{
-			// double to int conversion to avoid precision issue
-			int properAltitude = (int)(kapinfo.GetProperAltitudeForDestination() / 100.0);
-			advisory += "DES:" + to_string(properAltitude);
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "DES:%.0f", properAltitude / 100.0);
+			return;
 		}
 
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", advisory.c_str());
+		if (kapinfo.NeedDescent())
+		{
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "DES:%.0f", properAltitude / 100.0);
+		}
 	}
 }
