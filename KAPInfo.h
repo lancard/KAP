@@ -420,8 +420,6 @@ public:
             return true;
         if (HasRoute("Y209"))
             return true;
-        if (HasRoute("Y685"))
-            return true;
         if (HasRoute("Z84 KALEK"))
             return true;
         if (HasRoute("Y697 LANAT"))
