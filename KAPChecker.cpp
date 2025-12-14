@@ -4,6 +4,7 @@
 
 #define RGB_YELLOW RGB(255, 255, 0)
 #define RGB_BLUE RGB(0, 0, 255)
+#define HANDOFF_DISTANCE_NM 25.0
 
 CPosition GetCPositionFromString(const string &latitude, const string &longitude)
 {
@@ -744,7 +745,8 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 				kapinfo.DestinationAirport == "ZSNT" ||
 				kapinfo.DestinationAirport == "ZSHC")
 			{
-				if (kapinfo.FinalAltitude != 22000 && kapinfo.FinalAltitude != 24000 && kapinfo.FinalAltitude != 26000)
+				if (kapinfo.FinalAltitude != 22000 && kapinfo.FinalAltitude != 24000 && kapinfo.FinalAltitude != 26000 &&
+					kapinfo.TempAltitude != 22000 && kapinfo.TempAltitude != 24000 && kapinfo.TempAltitude != 26000)
 				{
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL220/240/260");
 					return;
@@ -829,91 +831,91 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near MUGUS
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["MUGUS"]) < 40.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["MUGUS"]) < HANDOFF_DISTANCE_NM && kapinfo.IsSouthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near ATOTI
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ATOTI"]) < 40.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ATOTI"]) < HANDOFF_DISTANCE_NM && kapinfo.IsSouthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near P2
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["P2"]) < 40.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["P2"]) < HANDOFF_DISTANCE_NM && kapinfo.IsNorthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near MESOV
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["MESOV"]) < 40.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["MESOV"]) < HANDOFF_DISTANCE_NM && kapinfo.IsNorthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near KANSU
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["KANSU"]) < 40.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["KANSU"]) < HANDOFF_DISTANCE_NM && kapinfo.IsNorthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near ANDOL
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ANDOL"]) < 40.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ANDOL"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near IGRAS
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["IGRAS"]) < 40.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["IGRAS"]) < HANDOFF_DISTANCE_NM && kapinfo.IsSouthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near LANAT
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["LANAT"]) < 40.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["LANAT"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near SAPRA
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["SAPRA"]) < 40.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["SAPRA"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near KALEK
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["KALEK"]) < 40.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["KALEK"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near SAMDO
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["SAMDO"]) < 40.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["SAMDO"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near RUGMA
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["RUGMA"]) < 40.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["RUGMA"]) < HANDOFF_DISTANCE_NM && kapinfo.IsSouthBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
 		}
 
 		// near BEDAR
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["BEDAR"]) < 40.0 && kapinfo.IsEastBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["BEDAR"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
