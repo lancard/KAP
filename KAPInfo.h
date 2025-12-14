@@ -578,7 +578,7 @@ public:
         if (distance_to_destination <= 0.0)
             return 0.0;
 
-        return distance_to_destination * 3 * 100;
+        return distance_to_destination * 3.2 * 100;
     }
 
     double CalculateDistanceInNm(CPosition point)
