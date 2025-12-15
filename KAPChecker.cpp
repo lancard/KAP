@@ -497,7 +497,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		incursionRunway = kapinfo.DepartureAirport + "-" + kapinfo.DepartureRunway;
 	}
-	if (kapinfo.IsOnDestinationRunway() && !kapinfo.IsAirborne())
+	if (kapinfo.IsOnDestinationRunway() || flightType == LANDING_ROLLING)
 	{
 		incursionRunway = kapinfo.DestinationAirport + "-" + kapinfo.DestinationRunway;
 	}
