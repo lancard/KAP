@@ -1,10 +1,14 @@
 #include "KAPChecker.h"
 #include "KAPInfo.h"
 #include "KAPFixes.h"
+#include "KAPScreen.h"
 
-#define RGB_YELLOW RGB(255, 255, 0)
+#define RGB_RED RGB(255, 0, 0)
+#define RGB_GREEN RGB(0, 255, 0)
 #define RGB_BLUE RGB(0, 0, 255)
+#define RGB_YELLOW RGB(255, 255, 0)
 #define HANDOFF_DISTANCE_NM 25.0
+#define FLIGHT_LEVEL_CHANGE_DISTANCE_NM 50.0
 
 CPosition GetCPositionFromString(const string &latitude, const string &longitude)
 {
@@ -381,6 +385,37 @@ CKAPChecker::~CKAPChecker(void)
 
 void CKAPChecker::OnTimer(int Counter)
 {
+	if (Counter % 60 == 0)
+	{
+		clearApproachRunwayMap();
+	}
+}
+
+CRadarScreen *CKAPChecker::OnRadarScreenCreated(const char *sDisplayName,
+												bool NeedRadarContent,
+												bool GeoReferenced,
+												bool CanBeSaved,
+												bool CanBeCreated)
+{
+	return new CKAPScreen(this);
+}
+
+void CKAPChecker::clearApproachRunwayMap()
+{
+	lock_guard<mutex> lock(callsignApproachRunwayMapMutex);
+	callsignApproachRunwayMap.clear();
+}
+
+void CKAPChecker::setCallsignApproachRunwayMap(const string &callsign, const string &runway)
+{
+	lock_guard<mutex> lock(callsignApproachRunwayMapMutex);
+	callsignApproachRunwayMap[callsign] = runway;
+}
+
+void CKAPChecker::getApproachRunwayMapCopy(unordered_map<string, string> &outputMap)
+{
+	lock_guard<mutex> lock(callsignApproachRunwayMapMutex);
+	outputMap = callsignApproachRunwayMap;
 }
 
 void CKAPChecker::setTag(char *target, int *targetColorCode, COLORREF *targetColor, int colorCode, COLORREF color, const char *format, ...)
@@ -410,6 +445,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	// set all info
 	CKAPInfo kapinfo;
+	kapinfo.Callsign = RadarTarget.GetCallsign();
 	kapinfo.Latitude = RadarTarget.GetPosition().GetPosition().m_Latitude;
 	kapinfo.Longitude = RadarTarget.GetPosition().GetPosition().m_Longitude;
 	kapinfo.Altitude = RadarTarget.GetPosition().GetPressureAltitude();
@@ -455,6 +491,22 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	if (ItemCode != TAG_ITEM_KAP_RKRR)
 		return;
 
+	// for runway incursion warning system ------------------------------------------------
+	string incursionRunway = "";
+	if (kapinfo.IsOnDepartureRunway() && !kapinfo.IsAirborne())
+	{
+		incursionRunway = kapinfo.DepartureAirport + "-" + kapinfo.DepartureRunway;
+	}
+	if (kapinfo.IsOnDestinationRunway() && !kapinfo.IsAirborne())
+	{
+		incursionRunway = kapinfo.DestinationAirport + "-" + kapinfo.DestinationRunway;
+	}
+	if (flightType == APPROACHING && kapinfo.GetDistanceFromApproachRunwayInNm() < 6.0)
+	{
+		incursionRunway = kapinfo.DestinationAirport + "-" + kapinfo.DestinationRunway;
+	}
+	setCallsignApproachRunwayMap(kapinfo.Callsign, incursionRunway);
+
 	// ignore depature == arrival airport
 	if (kapinfo.DepartureAirport == kapinfo.DestinationAirport)
 	{
@@ -467,7 +519,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	if (FlightPlan.GetTrackingControllerIsMe())
 	{
 		// near AGAVO
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["AGAVO"]) < 40.0 && kapinfo.IsWestBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["AGAVO"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsWestBoundFlying())
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -535,7 +587,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near GOLOT
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["GOLOT"]) < 40.0 && kapinfo.IsWestBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["GOLOT"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsWestBoundFlying())
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -603,7 +655,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near TOMUK
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["TOMUK"]) < 40.0 && kapinfo.IsWestBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["TOMUK"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsWestBoundFlying())
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -671,7 +723,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near VASRO
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["VASRO"]) < 40.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["VASRO"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsNorthBoundFlying())
 		{
 			// RVSM(ft)
 			if (kapinfo.FinalAltitude == 21700 || kapinfo.FinalAltitude == 23600 || kapinfo.FinalAltitude == 25600 || kapinfo.FinalAltitude == 27600 || kapinfo.FinalAltitude == 30100 || kapinfo.FinalAltitude == 32100 || kapinfo.FinalAltitude == 34100 || kapinfo.FinalAltitude == 36100 || kapinfo.FinalAltitude == 38100 || kapinfo.FinalAltitude == 40100)
@@ -734,7 +786,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near LAMEN
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["LAMEN"]) < 40.0 && kapinfo.IsWestBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["LAMEN"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsWestBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "ZSPD" ||
 				kapinfo.DestinationAirport == "ZSSS" ||
@@ -764,7 +816,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near ADNUR
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ADNUR"]) < 40.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ADNUR"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsNorthBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "UHWW")
 			{
@@ -778,7 +830,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near RIVAT
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["RIVAT"]) < 40.0 && kapinfo.IsNorthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["RIVAT"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsNorthBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "UHWW")
 			{
@@ -792,7 +844,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near INVOK
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["INVOK"]) < 40.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["INVOK"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsSouthBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
@@ -805,7 +857,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near APELA
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["APELA"]) < 40.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["APELA"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsSouthBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
@@ -818,7 +870,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 
 		// near BESNA
-		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["BESNA"]) < 40.0 && kapinfo.IsSouthBoundFlying())
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["BESNA"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsSouthBoundFlying())
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
@@ -924,25 +976,24 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	// end of hand-off checks ------------------------------
 
-	// check even or odd level
-	if (kapinfo.IsWestBoundPlan() && kapinfo.IsFinalOddLevel())
+	// pre check (high priority) ----------------------------------------------------
+	if (kapinfo.CurrentSquawk == "7500")
 	{
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_EVEN_ALT");
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_RED, "%s", "HIJACK");
+		return;
+	}
+	if (kapinfo.CurrentSquawk == "7600")
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_RED, "%s", "RADIO_FAIL");
+		return;
+	}
+	if (kapinfo.CurrentSquawk == "7700")
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_RED, "%s", "EMERGENCY");
 		return;
 	}
 
-	if (kapinfo.IsEastBoundPlan() && kapinfo.IsFinalEvenLevel())
-	{
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_ODD_ALT");
-		return;
-	}
-
-	if (!kapinfo.isVFR && kapinfo.IsDestinationRKRR() && kapinfo.DestinationRunway.empty())
-	{
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
-		return;
-	}
-
+	// flight type specific checks -------------------------------------------------
 	if (flightType == CLEARANCE)
 	{
 		if (kapinfo.IsMoving())
@@ -1001,7 +1052,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	if (flightType == ARRIVAL)
 	{
-		if (kapinfo.Altitude < 10000 && !(kapinfo.IsClearedApproach() || kapinfo.IsClearedVisualApproach()))
+		if (kapinfo.Altitude < 13000 && !(kapinfo.IsClearedApproach() || kapinfo.IsClearedVisualApproach()))
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "CLRD_APPR");
 			return;
@@ -1036,6 +1087,40 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	}
 
 	// -- advisories ----------------------------------------------------------------
+	if (kapinfo.PlanSquawk == "2000" || kapinfo.PlanSquawk == "7000" || kapinfo.PlanSquawk == "0000" || kapinfo.PlanSquawk == "")
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "CHANGE_SQ");
+		return;
+	}
+	if (kapinfo.isVFR && !kapinfo.PlanSquawk.starts_with("12"))
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "SET_VFR_SQ");
+		return;
+	}
+	if (!kapinfo.isVFR && kapinfo.PlanSquawk.starts_with("12"))
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "SET_IFR_SQ");
+		return;
+	}
+
+	if (kapinfo.IsWestBoundPlan() && kapinfo.IsFinalOddLevel())
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_EVEN_ALT");
+		return;
+	}
+
+	if (kapinfo.IsEastBoundPlan() && kapinfo.IsFinalEvenLevel())
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_ODD_ALT");
+		return;
+	}
+
+	if (!kapinfo.isVFR && kapinfo.IsDestinationRKRR() && kapinfo.DestinationRunway.empty())
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NO_RWY");
+		return;
+	}
+
 	if (flightType >= CRUISING)
 	{
 		double properAltitude = kapinfo.GetProperAltitudeForDestination();

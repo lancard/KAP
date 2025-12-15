@@ -1,8 +1,9 @@
 #pragma once
-#define PROGRAM_VERSION "3.3.5"
+#define PROGRAM_VERSION "3.5.1"
 #include <SDKDDKVer.h>
 #include <afxwin.h>
 #include <string>
+#include <mutex>
 #include <unordered_map>
 #include "EuroScopePlugIn.h"
 
@@ -11,6 +12,10 @@ using namespace EuroScopePlugIn;
 
 class CKAPChecker : public EuroScopePlugIn::CPlugIn
 {
+private:
+	mutex callsignApproachRunwayMapMutex;
+	unordered_map<string, string> callsignApproachRunwayMap;
+
 public:
 	CKAPChecker();
 	~CKAPChecker();
@@ -28,6 +33,16 @@ public:
 					  double *pFontSize);
 
 	void setTag(char *target, int *targetColorCode, COLORREF *targetColor, int colorCode, COLORREF color, const char *format, ...);
+
+	void clearApproachRunwayMap();
+	void setCallsignApproachRunwayMap(const string& callsign, const string& runway);
+	void getApproachRunwayMapCopy(unordered_map<string, string>& outputMap);
+
+	CRadarScreen *OnRadarScreenCreated(const char *sDisplayName,
+									   bool NeedRadarContent,
+									   bool GeoReferenced,
+									   bool CanBeSaved,
+									   bool CanBeCreated);
 
 	void OnTimer(int Counter);
 };

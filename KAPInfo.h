@@ -21,6 +21,7 @@ unordered_map<std::string, CPosition> runway_map;
 class CKAPInfo
 {
 public:
+    string Callsign;
     double Latitude;
     double Longitude;
     int Altitude;
@@ -168,7 +169,7 @@ public:
 
     bool IsAirborne()
     {
-        if (GroundSpeed > 60 || VerticalSpeed > 50)
+        if (GroundSpeed > 80 || VerticalSpeed > 50)
             return true;
         return false;
     }
@@ -549,6 +550,32 @@ public:
         CPosition mylocation = MyPosition();
 
         return mylocation.DistanceTo(destinationPos);
+    }
+
+    double GetDistanceFromDepartureRunwayInNm()
+    {
+        string AirportAndDepartureRunway = DepartureAirport + "-" + DepartureRunway;
+
+        if (!runway_map.contains(AirportAndDepartureRunway))
+            return 10000.0;
+
+        CPosition runwayPos = runway_map[AirportAndDepartureRunway];
+        CPosition mylocation = MyPosition();
+
+        return mylocation.DistanceTo(runwayPos);
+    }
+
+    double GetDistanceFromApproachRunwayInNm()
+    {
+        string AirportAndDestinationRunway = DestinationAirport + "-" + DestinationRunway;
+
+        if (!runway_map.contains(AirportAndDestinationRunway))
+            return 10000.0;
+
+        CPosition runwayPos = runway_map[AirportAndDestinationRunway];
+        CPosition mylocation = MyPosition();
+
+        return mylocation.DistanceTo(runwayPos);
     }
 
     bool NeedExpeditedDescent()

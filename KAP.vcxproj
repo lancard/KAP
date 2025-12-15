@@ -111,11 +111,13 @@
   <ItemGroup>
     <ClCompile Include="KAP.cpp" />
     <ClCompile Include="KAPChecker.cpp" />
+    <ClCompile Include="KAPScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KAP.h" />
     <ClInclude Include="EuroScopePlugIn.h" />
     <ClInclude Include="KAPChecker.h" />
+    <ClInclude Include="KAPScreen.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="EuroScopePlugInDll.lib" />
