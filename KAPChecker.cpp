@@ -2,6 +2,7 @@
 #include "KAPInfo.h"
 #include "KAPFixes.h"
 #include "KAPScreen.h"
+#include "json.hpp"
 
 #define RGB_RED RGB(255, 0, 0)
 #define RGB_GREEN RGB(0, 255, 0)
@@ -9,6 +10,144 @@
 #define RGB_YELLOW RGB(255, 255, 0)
 #define HANDOFF_DISTANCE_NM 25.0
 #define FLIGHT_LEVEL_CHANGE_DISTANCE_NM 50.0
+
+string HttpGet(const string &url)
+{
+	try
+	{
+		int wlen = MultiByteToWideChar(CP_UTF8, 0, url.c_str(), -1, nullptr, 0);
+		wstring wurl(wlen, 0);
+		MultiByteToWideChar(CP_UTF8, 0, url.c_str(), -1, &wurl[0], wlen);
+
+		URL_COMPONENTS comp = {0};
+		comp.dwStructSize = sizeof(comp);
+
+		wchar_t host[256] = {};
+		wchar_t path[2048] = {};
+		comp.lpszHostName = host;
+		comp.dwHostNameLength = 256;
+		comp.lpszUrlPath = path;
+		comp.dwUrlPathLength = 2048;
+
+		if (!WinHttpCrackUrl(wurl.c_str(), 0, 0, &comp))
+		{
+			return "";
+		}
+
+		bool isHttps = (comp.nScheme == INTERNET_SCHEME_HTTPS);
+		INTERNET_PORT port = comp.nPort;
+
+		HINTERNET hSession = WinHttpOpen(L"HttpClient/1.0",
+										 WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+										 WINHTTP_NO_PROXY_NAME,
+										 WINHTTP_NO_PROXY_BYPASS, 0);
+
+		if (!hSession)
+			return "";
+
+		HINTERNET hConnect = WinHttpConnect(hSession, comp.lpszHostName, port, 0);
+		if (!hConnect)
+		{
+			WinHttpCloseHandle(hSession);
+			return "";
+		}
+
+		HINTERNET hRequest = WinHttpOpenRequest(
+			hConnect, L"GET", comp.lpszUrlPath,
+			NULL, WINHTTP_NO_REFERER,
+			WINHTTP_DEFAULT_ACCEPT_TYPES,
+			isHttps ? WINHTTP_FLAG_SECURE : 0);
+
+		if (!hRequest)
+		{
+			WinHttpCloseHandle(hConnect);
+			WinHttpCloseHandle(hSession);
+			return "";
+		}
+
+		BOOL result = WinHttpSendRequest(
+			hRequest,
+			WINHTTP_NO_ADDITIONAL_HEADERS,
+			0,
+			WINHTTP_NO_REQUEST_DATA, 0,
+			0, 0);
+
+		if (!result)
+		{
+			WinHttpCloseHandle(hRequest);
+			WinHttpCloseHandle(hConnect);
+			WinHttpCloseHandle(hSession);
+			return "";
+		}
+
+		result = WinHttpReceiveResponse(hRequest, NULL);
+		if (!result)
+		{
+			WinHttpCloseHandle(hRequest);
+			WinHttpCloseHandle(hConnect);
+			WinHttpCloseHandle(hSession);
+			return "";
+		}
+
+		string response;
+		DWORD sizeAvailable = 0;
+
+		do
+		{
+			sizeAvailable = 0;
+			if (!WinHttpQueryDataAvailable(hRequest, &sizeAvailable))
+				break;
+			if (sizeAvailable == 0)
+				break;
+
+			string buffer(sizeAvailable, 0);
+			DWORD bytesRead = 0;
+			if (!WinHttpReadData(hRequest, &buffer[0], sizeAvailable, &bytesRead))
+				break;
+
+			response.append(buffer.c_str(), bytesRead);
+
+		} while (sizeAvailable > 0);
+
+		WinHttpCloseHandle(hRequest);
+		WinHttpCloseHandle(hConnect);
+		WinHttpCloseHandle(hSession);
+
+		return response;
+	}
+	catch (...)
+	{
+		return "";
+	}
+}
+
+std::string uppercase(std::string s)
+{
+	std::ranges::transform(s, s.begin(),
+						   [](unsigned char c)
+						   { return std::toupper(c); });
+	return s;
+}
+
+string trim(const string &s)
+{
+	size_t start = 0;
+	while (start < s.size() && isspace(static_cast<unsigned char>(s[start])))
+	{
+		++start;
+	}
+
+	if (start == s.size())
+		return "";
+
+	size_t end = s.size() - 1;
+	while (end > start && isspace(static_cast<unsigned char>(s[end])))
+	{
+		--end;
+	}
+
+	return s.substr(start, end - start + 1);
+}
 
 CPosition GetCPositionFromString(const string &latitude, const string &longitude)
 {
@@ -374,13 +513,56 @@ CKAPChecker::CKAPChecker(void) : CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	RegisterTagItemType("Checker", TAG_ITEM_KAP_RKRR);
 	RegisterTagItemType("Flight Status", TAG_ITEM_KAP_STATUS);
 	RegisterTagItemType("Approach Advisory", TAG_ITEM_KAP_APP_ADVISORY);
+	RegisterTagItemType("Pilot Frequency", TAG_ITEM_KAP_FREQUENCY);
+
+	transceiverWorkerThread = thread(&CKAPChecker::GetTransceiverThreadRunner, this);
 
 	DisplayUserMessage("Message", "KAP", std::string("KAP Loaded.").c_str(), false, false, false, false, false);
 }
 
 CKAPChecker::~CKAPChecker(void)
 {
+	terminateSignal = true;
 	DisplayUserMessage("Message", "KAP", std::string("KAP Unloaded.").c_str(), false, false, false, false, false);
+}
+
+void CKAPChecker::GetTransceiverThreadRunner()
+{
+	while (!terminateSignal.load())
+	{
+		try
+		{
+			nlohmann::json list = nlohmann::json::parse(HttpGet("https://data.vatsim.net/v3/transceivers-data.json"));
+
+			lock_guard<mutex> lock(callsignFrequencyMapMutex);
+			callsignFrequencyMap.clear();
+			for (const auto &item : list)
+			{
+				if (item["transceivers"].empty())
+					continue;
+
+				string callsign = item["callsign"];
+				int frequency = item["transceivers"][0]["frequency"];
+				// convert 122800015 to 122.800
+				string frequencyStr = to_string(frequency);
+				if (frequencyStr.length() < 6)
+					continue;
+
+				string prefix = frequencyStr.substr(0, 3);
+				string suffix = frequencyStr.substr(3, 3);
+				frequencyStr = prefix + "." + suffix;
+				callsignFrequencyMap[callsign] = frequencyStr;
+			}
+		}
+		catch (...)
+		{
+		}
+
+		for (int i = 0; i < 30 && !terminateSignal.load(); ++i)
+		{
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+		}
+	}
 }
 
 void CKAPChecker::OnTimer(int Counter)
@@ -434,6 +616,20 @@ void CKAPChecker::setTag(char *target, int *targetColorCode, COLORREF *targetCol
 	va_end(args);
 }
 
+string CKAPChecker::GetMyFrequency()
+{
+	double freq = ControllerMyself().GetPrimaryFrequency();
+
+	// convert 122.800 to "122.800"
+	string frequencyStr = to_string(static_cast<int>(freq * 1000));
+	if (frequencyStr.length() < 6)
+		return "UNKNOWN";
+	string prefix = frequencyStr.substr(0, 3);
+	string suffix = frequencyStr.substr(3, 3);
+	frequencyStr = prefix + "." + suffix;
+	return frequencyStr;
+}
+
 void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget, int ItemCode, int TagData,
 							   char sItemString[16], int *pColorCode, COLORREF *pRGB, double *pFontSize)
 {
@@ -472,6 +668,26 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		string flightTypeString = kapinfo.GetTypeOfFlightString();
 		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_BLUE, "%s", flightTypeString.c_str());
+		return;
+	}
+
+	if (ItemCode == TAG_ITEM_KAP_FREQUENCY)
+	{
+		string frequency = "UNKNOWN";
+		{
+			lock_guard<mutex> lock(callsignFrequencyMapMutex);
+			auto it = callsignFrequencyMap.find(kapinfo.Callsign);
+			if (it != callsignFrequencyMap.end())
+			{
+				frequency = it->second;
+			}
+		}
+
+		if (GetMyFrequency() == frequency)
+		{
+			frequency = "MY_FREQ";
+		}
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", frequency.c_str());
 		return;
 	}
 

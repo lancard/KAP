@@ -1,10 +1,12 @@
 #pragma once
-#define PROGRAM_VERSION "3.5.2"
+#define PROGRAM_VERSION "3.7.2"
 #include <SDKDDKVer.h>
 #include <afxwin.h>
 #include <string>
 #include <mutex>
 #include <unordered_map>
+#include <winhttp.h>
+#pragma comment(lib, "winhttp.lib")
 #include "EuroScopePlugIn.h"
 
 using namespace std;
@@ -16,6 +18,10 @@ private:
 	mutex callsignApproachRunwayMapMutex;
 	unordered_map<string, string> callsignApproachRunwayMap;
 
+	atomic<bool> terminateSignal{false};
+	thread transceiverWorkerThread;
+	mutex callsignFrequencyMapMutex;
+	unordered_map<string, string> callsignFrequencyMap;
 public:
 	CKAPChecker();
 	~CKAPChecker();
@@ -23,6 +29,7 @@ public:
 	const int TAG_ITEM_KAP_RKRR = 7527;
 	const int TAG_ITEM_KAP_STATUS = 7528;
 	const int TAG_ITEM_KAP_APP_ADVISORY = 7529;
+	const int TAG_ITEM_KAP_FREQUENCY = 7530;
 
 	void OnGetTagItem(CFlightPlan FlightPlan, EuroScopePlugIn::CRadarTarget RadarTarget,
 					  int ItemCode,
@@ -45,4 +52,8 @@ public:
 									   bool CanBeCreated);
 
 	void OnTimer(int Counter);
+
+	void GetTransceiverThreadRunner();
+
+	string GetMyFrequency();
 };
