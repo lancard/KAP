@@ -42,6 +42,7 @@ public:
     string Star;
     string Route;
     string ScratchPadString;
+    string listenFrequency;
 
     CPosition MyPosition()
     {

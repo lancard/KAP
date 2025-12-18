@@ -534,8 +534,7 @@ void CKAPChecker::GetTransceiverThreadRunner()
 		{
 			nlohmann::json list = nlohmann::json::parse(HttpGet("https://data.vatsim.net/v3/transceivers-data.json"));
 
-			lock_guard<mutex> lock(callsignFrequencyMapMutex);
-			callsignFrequencyMap.clear();
+			unordered_map<string, string> tempMap;
 			for (const auto &item : list)
 			{
 				if (item["transceivers"].empty())
@@ -551,8 +550,11 @@ void CKAPChecker::GetTransceiverThreadRunner()
 				string prefix = frequencyStr.substr(0, 3);
 				string suffix = frequencyStr.substr(3, 3);
 				frequencyStr = prefix + "." + suffix;
-				callsignFrequencyMap[callsign] = frequencyStr;
+				tempMap[callsign] = frequencyStr;
 			}
+
+			lock_guard<mutex> lock(callsignFrequencyMapMutex);
+			callsignFrequencyMap.swap(tempMap);
 		}
 		catch (...)
 		{
@@ -662,6 +664,18 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	kapinfo.CurrentSquawk = RadarTarget.GetPosition().GetSquawk();
 	kapinfo.isSquawkModeC = RadarTarget.GetPosition().GetTransponderC();
 	kapinfo.ScratchPadString = FlightPlan.GetControllerAssignedData().GetScratchPadString();
+	{
+		lock_guard<mutex> lock(callsignFrequencyMapMutex);
+		auto it = callsignFrequencyMap.find(kapinfo.Callsign);
+		if (it != callsignFrequencyMap.end())
+		{
+			kapinfo.listenFrequency = it->second;
+		}
+		else
+		{
+			kapinfo.listenFrequency = "UNKNOWN";
+		}
+	}
 	int flightType = kapinfo.GetTypeOfFlight();
 
 	if (ItemCode == TAG_ITEM_KAP_STATUS)
@@ -673,21 +687,14 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	if (ItemCode == TAG_ITEM_KAP_FREQUENCY)
 	{
-		string frequency = "UNKNOWN";
+		if (GetMyFrequency() == kapinfo.listenFrequency)
 		{
-			lock_guard<mutex> lock(callsignFrequencyMapMutex);
-			auto it = callsignFrequencyMap.find(kapinfo.Callsign);
-			if (it != callsignFrequencyMap.end())
-			{
-				frequency = it->second;
-			}
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", "MY_FREQ");
 		}
-
-		if (GetMyFrequency() == frequency)
+		else
 		{
-			frequency = "MY_FREQ";
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", kapinfo.listenFrequency.c_str());
 		}
-		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", frequency.c_str());
 		return;
 	}
 
@@ -1351,5 +1358,11 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "DES:%.0f", properAltitude / 100.0);
 		}
+	}
+
+	if (GetMyFrequency() == kapinfo.listenFrequency && !kapinfo.IsInRKRR())
+	{
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "HEAR_MY_FREQ");
+		return;
 	}
 }
