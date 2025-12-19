@@ -523,6 +523,11 @@ CKAPChecker::CKAPChecker(void) : CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 CKAPChecker::~CKAPChecker(void)
 {
 	terminateSignal = true;
+	// join the thread
+	if (transceiverWorkerThread.joinable())
+	{
+		transceiverWorkerThread.join();
+	}
 	DisplayUserMessage("Message", "KAP", std::string("KAP Unloaded.").c_str(), false, false, false, false, false);
 }
 
@@ -689,7 +694,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		if (GetMyFrequency() == kapinfo.listenFrequency)
 		{
-			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", "MY_FREQ");
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s/%s", GetMyFrequency().c_str(), kapinfo.listenFrequency.c_str());
 		}
 		else
 		{
