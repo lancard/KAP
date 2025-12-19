@@ -121,11 +121,11 @@ string HttpGet(const string &url)
 	}
 }
 
-std::string uppercase(std::string s)
+string uppercase(string s)
 {
-	std::ranges::transform(s, s.begin(),
+	ranges::transform(s, s.begin(),
 						   [](unsigned char c)
-						   { return std::toupper(c); });
+						   { return toupper(c); });
 	return s;
 }
 
@@ -517,7 +517,7 @@ CKAPChecker::CKAPChecker(void) : CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 
 	transceiverWorkerThread = thread(&CKAPChecker::GetTransceiverThreadRunner, this);
 
-	DisplayUserMessage("Message", "KAP", std::string("KAP Loaded.").c_str(), false, false, false, false, false);
+	DisplayUserMessage("Message", "KAP", string("KAP Loaded. Please allow 'Standard ES radar screen' drawing in 'plug-ins' menu.").c_str(), false, false, false, false, false);
 }
 
 CKAPChecker::~CKAPChecker(void)
@@ -528,7 +528,7 @@ CKAPChecker::~CKAPChecker(void)
 	{
 		transceiverWorkerThread.join();
 	}
-	DisplayUserMessage("Message", "KAP", std::string("KAP Unloaded.").c_str(), false, false, false, false, false);
+	DisplayUserMessage("Message", "KAP", string("KAP Unloaded.").c_str(), false, false, false, false, false);
 }
 
 void CKAPChecker::GetTransceiverThreadRunner()
@@ -567,7 +567,7 @@ void CKAPChecker::GetTransceiverThreadRunner()
 
 		for (int i = 0; i < 30 && !terminateSignal.load(); ++i)
 		{
-			std::this_thread::sleep_for(std::chrono::seconds(1));
+			this_thread::sleep_for(chrono::seconds(1));
 		}
 	}
 }
@@ -628,7 +628,7 @@ string CKAPChecker::GetMyFrequency()
 	double freq = ControllerMyself().GetPrimaryFrequency();
 
 	// convert 122.800 to "122.800"
-	string frequencyStr = to_string(static_cast<int>(freq * 1000));
+	string frequencyStr = to_string(static_cast<int>(freq * 1000 + 0.5));
 	if (frequencyStr.length() < 6)
 		return "UNKNOWN";
 	string prefix = frequencyStr.substr(0, 3);
@@ -694,7 +694,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		if (GetMyFrequency() == kapinfo.listenFrequency)
 		{
-			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s/%s", GetMyFrequency().c_str(), kapinfo.listenFrequency.c_str());
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", "MY_FREQ");
 		}
 		else
 		{
