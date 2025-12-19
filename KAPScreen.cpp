@@ -28,7 +28,7 @@ void CKAPScreen::OnRefresh(HDC hDC, int Phase)
 
 
     HPEN hPenOld;
-    HPEN hLinePen = CreatePen(PS_DOT, 1, RGB(255, 0, 0));
+    HPEN hLinePen = CreatePen(PS_DOT, 1, RGB(255, 255, 0));
     hPenOld = (HPEN)SelectObject(hDC, hLinePen);
 
     for (const auto &[callsign, runway] : callsign_approach_runway_map)

@@ -1230,7 +1230,8 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		if (!kapinfo.IsSquawkCodeMatched())
 		{
-			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "SQ_NOT_EQ");
+			string sq = string("SQ:") + kapinfo.PlanSquawk;
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", sq.c_str());
 			return;
 		}
 	}
@@ -1239,7 +1240,8 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		if (!kapinfo.IsSquawkCodeMatched())
 		{
-			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "SQ_NOT_EQ");
+			string sq = string("SQ:") + kapinfo.PlanSquawk;
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", sq.c_str());
 			return;
 		}
 
