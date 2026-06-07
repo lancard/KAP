@@ -124,8 +124,8 @@ string HttpGet(const string &url)
 string uppercase(string s)
 {
 	ranges::transform(s, s.begin(),
-						   [](unsigned char c)
-						   { return toupper(c); });
+					  [](unsigned char c)
+					  { return toupper(c); });
 	return s;
 }
 
@@ -514,6 +514,7 @@ CKAPChecker::CKAPChecker(void) : CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE,
 	RegisterTagItemType("Flight Status", TAG_ITEM_KAP_STATUS);
 	RegisterTagItemType("Approach Advisory", TAG_ITEM_KAP_APP_ADVISORY);
 	RegisterTagItemType("Pilot Frequency", TAG_ITEM_KAP_FREQUENCY);
+	RegisterTagItemType("Destination Airport", TAG_ITEM_KAP_DESTINATION_AIRPORT);
 
 	transceiverWorkerThread = thread(&CKAPChecker::GetTransceiverThreadRunner, this);
 
@@ -637,11 +638,89 @@ string CKAPChecker::GetMyFrequency()
 	return frequencyStr;
 }
 
+COLORREF HSVtoRGB(double h, double s, double v)
+{
+	double c = v * s;
+	double x = c * (1.0 - fabs(fmod(h / 60.0, 2.0) - 1.0));
+	double m = v - c;
+
+	double r = 0, g = 0, b = 0;
+
+	if (h < 60)
+	{
+		r = c;
+		g = x;
+		b = 0;
+	}
+	else if (h < 120)
+	{
+		r = x;
+		g = c;
+		b = 0;
+	}
+	else if (h < 180)
+	{
+		r = 0;
+		g = c;
+		b = x;
+	}
+	else if (h < 240)
+	{
+		r = 0;
+		g = x;
+		b = c;
+	}
+	else if (h < 300)
+	{
+		r = x;
+		g = 0;
+		b = c;
+	}
+	else
+	{
+		r = c;
+		g = 0;
+		b = x;
+	}
+
+	BYTE R = (BYTE)((r + m) * 255);
+	BYTE G = (BYTE)((g + m) * 255);
+	BYTE B = (BYTE)((b + m) * 255);
+
+	return RGB(R, G, B);
+}
+
+COLORREF GetColorForDestinationAirport(const char *airport)
+{
+	uint32_t hash = 2166136261u; // FNV-1a
+
+	while (*airport)
+	{
+		hash ^= (uint8_t)*airport++;
+		hash *= 16777619u;
+	}
+
+	double hue = fmod(hash * 137.508, 360.0);
+
+	return HSVtoRGB(
+		hue,
+		0.85, // Saturation
+		0.85  // Value
+	);
+}
+
 void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget, int ItemCode, int TagData,
 							   char sItemString[16], int *pColorCode, COLORREF *pRGB, double *pFontSize)
 {
 	if (!FlightPlan.IsValid())
 		return;
+
+	if (ItemCode == TAG_ITEM_KAP_DESTINATION_AIRPORT)
+	{
+		const char *destinationAirport = FlightPlan.GetFlightPlanData().GetDestination();
+		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, GetColorForDestinationAirport(destinationAirport), "%s", destinationAirport);
+		return;
+	}
 
 	if (!RadarTarget.IsValid())
 		return;
