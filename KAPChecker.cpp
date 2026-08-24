@@ -8,7 +8,7 @@
 #define RGB_GREEN RGB(0, 255, 0)
 #define RGB_BLUE RGB(0, 0, 255)
 #define RGB_YELLOW RGB(255, 255, 0)
-#define HANDOFF_DISTANCE_NM 25.0
+#define HANDOFF_DISTANCE_NM 23.0
 #define FLIGHT_LEVEL_CHANGE_DISTANCE_NM 50.0
 
 string HttpGet(const string &url)
