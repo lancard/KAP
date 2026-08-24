@@ -19,11 +19,11 @@ jobs:
       - uses: microsoft/setup-msbuild@v1.1.3
      
       - name: install buildtools
-        run: Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vs_BuildTools.exe -OutFile .\vs_BuildTools.exe
+        run: Invoke-WebRequest -Uri https://aka.ms/vs/stable/vs_buildtools.exe -OutFile .\vs_buildtools.exe
         shell: powershell
 
       - name: install MFC
-        run: .\vs_BuildTools.exe --quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.MSBuild --add Microsoft.VisualStudio.Component.VC.ATLMFC --add Microsoft.VisualStudio.Component.VC.MFC --includeRecommended
+        run: .\vs_buildtools.exe --quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.MSBuild --add Microsoft.VisualStudio.Component.VC.ATLMFC --add Microsoft.VisualStudio.Component.VC.MFC --includeRecommended
 
       - name: generate version string
         run: |
