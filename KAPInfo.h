@@ -273,7 +273,7 @@ public:
         return distanceToDeparture < distanceToArrival;
     }
 
-    bool IsInRKRR()
+    static const vector<pair<double, double>> &GetRKRRBoundary()
     {
         static const vector<pair<double, double>> rkrrBoundary = {
             {124.0, 38.0},
@@ -325,8 +325,73 @@ public:
             {125.416667, 30.0},
             {124.0, 30.0},
             {124.0, 36.36},
-            {124.0, 38.0}};
-        return PointInPolygon(rkrrBoundary, Longitude, Latitude);
+            {124.0, 38.0}
+        };
+
+        return rkrrBoundary;
+    }
+
+    bool IsInRKRR()
+    {
+        return PointInPolygon(GetRKRRBoundary(), Longitude, Latitude);
+    }
+
+    double GetDistanceFromRKRRBoundaryInNm()
+    {
+        const vector<pair<double, double>> &rkrrBoundary = GetRKRRBoundary();
+        if (rkrrBoundary.size() < 2)
+        {
+            return 100000.0;
+        }
+
+        double minDistance = std::numeric_limits<double>::infinity();
+
+        for (size_t i = 0; i < rkrrBoundary.size(); ++i)
+        {
+            size_t j = (i + 1) % rkrrBoundary.size();
+
+            double x1 = rkrrBoundary[i].first;
+            double y1 = rkrrBoundary[i].second;
+            double x2 = rkrrBoundary[j].first;
+            double y2 = rkrrBoundary[j].second;
+
+            double dx = x2 - x1;
+            double dy = y2 - y1;
+            double segLen2 = dx * dx + dy * dy;
+
+            double t;
+            if (segLen2 == 0.0)
+            {
+                t = 0.0;
+            }
+            else
+            {
+                t = ((Longitude - x1) * dx + (Latitude - y1) * dy) / segLen2;
+                if (t < 0.0)
+                    t = 0.0;
+                else if (t > 1.0)
+                    t = 1.0;
+            }
+
+            double projLon = x1 + t * dx;
+            double projLat = y1 + t * dy;
+
+            CPosition myPos;
+            myPos.m_Latitude = Latitude;
+            myPos.m_Longitude = Longitude;
+
+            CPosition projPos;
+            projPos.m_Latitude = projLat;
+            projPos.m_Longitude = projLon;
+
+            double dist = myPos.DistanceTo(projPos);
+            if (dist < minDistance)
+            {
+                minDistance = dist;
+            }
+        }
+
+        return minDistance;
     }
 
     bool IsSquawkCodeMatched()

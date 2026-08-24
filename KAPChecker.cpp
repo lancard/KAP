@@ -825,7 +825,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	// meter metric conversion check, etc
 	if (FlightPlan.GetTrackingControllerIsMe())
 	{
-		if (!kapinfo.IsInRKRR())
+		if (!kapinfo.IsInRKRR() && !kapinfo.IsDestinationRKRR())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "OUT_OF_FIR");
 			return;
@@ -1303,6 +1303,12 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	if (kapinfo.CurrentSquawk == "7700")
 	{
 		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_RED, "%s", "EMERGENCY");
+		return;
+	}
+
+	// ignore 50nm away from RKRR, if not in RKRR FIR
+	if (!kapinfo.IsInRKRR() && kapinfo.GetDistanceFromRKRRBoundaryInNm() > 50.0)
+	{
 		return;
 	}
 
