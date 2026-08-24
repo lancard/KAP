@@ -1209,6 +1209,13 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			return;
 		}
 
+		// near LAMEN
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["LAMEN"]) < HANDOFF_DISTANCE_NM && kapinfo.IsWestBoundFlying())
+		{
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
+			return;
+		}
+
 		// near P2
 		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["P2"]) < HANDOFF_DISTANCE_NM && kapinfo.IsNorthBoundFlying())
 		{
