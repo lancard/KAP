@@ -1195,6 +1195,8 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			}
 		}
 
+		// start of hand-off checks ------------------------------
+
 		// near MUGUS
 		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["MUGUS"]) < HANDOFF_DISTANCE_NM && kapinfo.IsSouthBoundFlying())
 		{
@@ -1204,6 +1206,13 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 		// near ATOTI
 		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ATOTI"]) < HANDOFF_DISTANCE_NM && kapinfo.IsSouthBoundFlying())
+		{
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
+			return;
+		}
+
+		// near AGAVO
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["AGAVO"]) < HANDOFF_DISTANCE_NM && kapinfo.IsWestBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
@@ -1272,6 +1281,27 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 			return;
 		}
 
+		// near INVOK
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["INVOK"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
+		{
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
+			return;
+		}
+
+		// near APELA
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["APELA"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
+		{
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
+			return;
+		}
+
+		// near BESNA
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["BESNA"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
+		{
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
+			return;
+		}
+
 		// near SAMDO
 		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["SAMDO"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
 		{
@@ -1281,6 +1311,13 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 		// near RUGMA
 		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["RUGMA"]) < HANDOFF_DISTANCE_NM && kapinfo.IsSouthBoundFlying())
+		{
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
+			return;
+		}
+
+		// near ONIKU
+		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["ONIKU"]) < HANDOFF_DISTANCE_NM && kapinfo.IsEastBoundFlying())
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "NEED_HAND_OFF");
 			return;
