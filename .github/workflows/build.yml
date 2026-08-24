@@ -22,8 +22,14 @@ jobs:
         run: Invoke-WebRequest -Uri https://aka.ms/vs/stable/vs_buildtools.exe -OutFile .\vs_buildtools.exe
         shell: powershell
 
-      - name: install MFC
-        run: .\vs_buildtools.exe --quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.MSBuild --add Microsoft.VisualStudio.Component.VC.ATLMFC --add Microsoft.VisualStudio.Component.VC.MFC --includeRecommended
+      - name: Install MFC libraries
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" modify `
+            --installPath "C:\Program Files\Microsoft Visual Studio\18\Enterprise" `
+            --add Microsoft.VisualStudio.Component.VC.ATLMFC `
+            --quiet `
+            --norestart
 
       - name: generate version string
         run: |
