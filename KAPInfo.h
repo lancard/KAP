@@ -534,7 +534,12 @@ public:
     double GetDistanceFromDepartureInNm()
     {
         if (!airport_map.contains(DepartureAirport))
-            return 0.0;
+        {
+            CPosition departurePos = airport_map["VHHH"];
+            CPosition mylocation = MyPosition();
+
+            return mylocation.DistanceTo(departurePos);
+        }
 
         CPosition departurePos = airport_map[DepartureAirport];
         CPosition mylocation = MyPosition();
@@ -545,7 +550,12 @@ public:
     double GetDistanceFromDestinationInNm()
     {
         if (!airport_map.contains(DestinationAirport))
-            return 0.0;
+        {
+            CPosition destinationPos = airport_map["VHHH"];
+            CPosition mylocation = MyPosition();
+
+            return mylocation.DistanceTo(destinationPos);
+        }
 
         CPosition destinationPos = airport_map[DestinationAirport];
         CPosition mylocation = MyPosition();

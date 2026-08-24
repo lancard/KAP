@@ -743,7 +743,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	kapinfo.DestinationRunway = FlightPlan.GetFlightPlanData().GetArrivalRwy();
 	kapinfo.Star = FlightPlan.GetFlightPlanData().GetStarName();
 	kapinfo.Route = FlightPlan.GetFlightPlanData().GetRoute();
-	kapinfo.isVFR = (FlightPlan.GetFlightPlanData().GetPlanType() == "V");
+	kapinfo.isVFR = (FlightPlan.GetFlightPlanData().GetPlanType()[0] == 'V');
 	kapinfo.PlanSquawk = FlightPlan.GetControllerAssignedData().GetSquawk();
 	kapinfo.CurrentSquawk = RadarTarget.GetPosition().GetSquawk();
 	kapinfo.isSquawkModeC = RadarTarget.GetPosition().GetTransponderC();
@@ -822,9 +822,15 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	// check all! -----------------------------------------------------------------------------
 
-	// meter metric conversion check
+	// meter metric conversion check, etc
 	if (FlightPlan.GetTrackingControllerIsMe())
 	{
+		if (!kapinfo.IsInRKRR())
+		{
+			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "OUT_OF_FIR");
+			return;
+		}
+
 		// near AGAVO
 		if (kapinfo.CalculateDistanceInNm(fir_boundary_fix_map["AGAVO"]) < FLIGHT_LEVEL_CHANGE_DISTANCE_NM && kapinfo.IsWestBoundFlying())
 		{
@@ -1449,7 +1455,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 	}
 
-	if (GetMyFrequency() == kapinfo.listenFrequency && !kapinfo.IsInRKRR())
+	if (GetMyFrequency() == kapinfo.listenFrequency && !kapinfo.IsInRKRR() && !kapinfo.IsDestinationRKRR())
 	{
 		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "HEAR_MY_FREQ");
 		return;
