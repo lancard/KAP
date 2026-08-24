@@ -1434,15 +1434,18 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		double properAltitude = kapinfo.GetProperAltitudeForDestination();
 
-		if (kapinfo.NeedExpeditedDescent())
+		if (properAltitude > 0.1)
 		{
-			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "DES:%.0f", properAltitude / 100.0);
-			return;
-		}
+			if (kapinfo.NeedExpeditedDescent())
+			{
+				setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "DES:%.0f", properAltitude / 100.0);
+				return;
+			}
 
-		if (kapinfo.NeedDescent())
-		{
-			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "DES:%.0f", properAltitude / 100.0);
+			if (kapinfo.NeedDescent())
+			{
+				setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "DES:%.0f", properAltitude / 100.0);
+			}
 		}
 	}
 
