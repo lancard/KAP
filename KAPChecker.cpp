@@ -1161,7 +1161,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
-				if (kapinfo.FinalAltitude != 25000)
+				if (kapinfo.FinalAltitude != 25000 && kapinfo.TempAltitude != 25000)
 				{
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250");
 					return;
@@ -1174,7 +1174,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
-				if (kapinfo.FinalAltitude != 25000)
+				if (kapinfo.FinalAltitude != 25000 && kapinfo.TempAltitude != 25000)
 				{
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250");
 					return;
@@ -1187,7 +1187,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		{
 			if (kapinfo.DestinationAirport == "RJFF")
 			{
-				if (kapinfo.FinalAltitude != 25000)
+				if (kapinfo.FinalAltitude != 25000 && kapinfo.TempAltitude != 25000)
 				{
 					setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "FL250");
 					return;
