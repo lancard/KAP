@@ -444,8 +444,6 @@ public:
     {
         if (HasRoute("Y711"))
             return true;
-        if (HasRoute("Y572"))
-            return true;
         if (HasRoute("Z53"))
             return true;
         if (HasRoute("MUGUS"))
