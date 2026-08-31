@@ -175,10 +175,20 @@ string GetApproachAdvisory(CKAPInfo &kapinfo)
 	{
 		if (kapinfo.DestinationRunway == "15L" || kapinfo.DestinationRunway == "15R")
 		{
+			if (kapinfo.Star.find("BITIM") != string::npos)
+			{
+				return "BITIM30";
+			}
+
 			return "MUNAN30";
 		}
 		if (kapinfo.DestinationRunway == "16L" || kapinfo.DestinationRunway == "16R")
 		{
+			if (kapinfo.Star.find("BITIM") != string::npos)
+			{
+				return "BITIM30";
+			}
+
 			return "MUNAN20";
 		}
 		if (kapinfo.DestinationRunway == "33L" || kapinfo.DestinationRunway == "33R")
