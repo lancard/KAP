@@ -1,8 +1,9 @@
 #pragma once
-#define PROGRAM_VERSION "3.8.9"
+#define PROGRAM_VERSION "3.9.1"
 #include <SDKDDKVer.h>
 #include <afxwin.h>
 #include <string>
+#include <algorithm>
 #include <mutex>
 #include <unordered_map>
 #include <winhttp.h>
@@ -20,8 +21,6 @@ private:
 
 	atomic<bool> terminateSignal{false};
 	thread transceiverWorkerThread;
-	mutex callsignFrequencyMapMutex;
-	unordered_map<string, string> callsignFrequencyMap;
 public:
 	CKAPChecker();
 	~CKAPChecker();
@@ -56,5 +55,5 @@ public:
 
 	void GetTransceiverThreadRunner();
 
-	string GetMyFrequency();
+	int GetMyFrequencyKHz();
 };

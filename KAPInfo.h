@@ -43,6 +43,7 @@ public:
     string Route;
     string ScratchPadString;
     string listenFrequency;
+    bool isHearingMyFrequency;
 
     CPosition MyPosition()
     {

@@ -11,6 +11,20 @@
 #define HANDOFF_DISTANCE_NM 23.0
 #define FLIGHT_LEVEL_CHANGE_DISTANCE_NM 50.0
 
+// 전역
+unordered_map<string, vector<int>> callsignFrequencyMap; // kHz, 중복 제거, 순서 유지
+std::mutex callsignFrequencyMapMutex;
+
+// 122800015(Hz) -> 122800(kHz). 소수 오차 보정을 위해 반올림
+static long long HzToKHz(long long hz) { return (hz + 500) / 1000; }
+
+static string KHzToString(long long khz)
+{
+	char buf[32];
+	snprintf(buf, sizeof(buf), "%lld.%03lld", khz / 1000, khz % 1000);
+	return buf;
+}
+
 string HttpGet(const string &url)
 {
 	try
@@ -550,27 +564,35 @@ void CKAPChecker::GetTransceiverThreadRunner()
 		{
 			nlohmann::json list = nlohmann::json::parse(HttpGet("https://data.vatsim.net/v3/transceivers-data.json"));
 
-			unordered_map<string, string> tempMap;
+			unordered_map<string, vector<int>> tempAll;
+
 			for (const auto &item : list)
 			{
-				if (item["transceivers"].empty())
+				if (!item.contains("callsign") || !item.contains("transceivers") ||
+					!item["transceivers"].is_array() || item["transceivers"].empty())
 					continue;
 
-				string callsign = item["callsign"];
-				int frequency = item["transceivers"][0]["frequency"];
-				// convert 122800015 to 122.800
-				string frequencyStr = to_string(frequency);
-				if (frequencyStr.length() < 6)
-					continue;
+				vector<int> freqs;
 
-				string prefix = frequencyStr.substr(0, 3);
-				string suffix = frequencyStr.substr(3, 3);
-				frequencyStr = prefix + "." + suffix;
-				tempMap[callsign] = frequencyStr;
+				for (const auto &t : item["transceivers"])
+				{
+					if (!t.contains("frequency") || !t["frequency"].is_number())
+						continue;
+
+					int khz = (int)HzToKHz(t["frequency"].get<long long>());
+					if (khz <= 0)
+						continue;
+
+					if (std::find(freqs.begin(), freqs.end(), khz) == freqs.end())
+						freqs.push_back(khz);
+				}
+
+				if (!freqs.empty())
+					tempAll[item["callsign"].get<string>()] = std::move(freqs);
 			}
 
 			lock_guard<mutex> lock(callsignFrequencyMapMutex);
-			callsignFrequencyMap.swap(tempMap);
+			callsignFrequencyMap.swap(tempAll);
 		}
 		catch (...)
 		{
@@ -634,18 +656,15 @@ void CKAPChecker::setTag(char *target, int *targetColorCode, COLORREF *targetCol
 	va_end(args);
 }
 
-string CKAPChecker::GetMyFrequency()
+// 내 주파수 (kHz). 관제 중이 아니거나 값이 이상하면 0
+int CKAPChecker::GetMyFrequencyKHz()
 {
-	double freq = ControllerMyself().GetPrimaryFrequency();
+	auto me = ControllerMyself();
+	if (!me.IsValid() || !me.IsController())
+		return 0;
 
-	// convert 122.800 to "122.800"
-	string frequencyStr = to_string(static_cast<int>(freq * 1000 + 0.5));
-	if (frequencyStr.length() < 6)
-		return "UNKNOWN";
-	string prefix = frequencyStr.substr(0, 3);
-	string suffix = frequencyStr.substr(3, 3);
-	frequencyStr = prefix + "." + suffix;
-	return frequencyStr;
+	int khz = static_cast<int>(std::lround(me.GetPrimaryFrequency() * 1000.0));
+	return (khz >= 100000) ? khz : 0; // 기존의 "6자리 미만이면 UNKNOWN"과 동일한 기준
 }
 
 COLORREF HSVtoRGB(double h, double s, double v)
@@ -761,13 +780,15 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 	{
 		lock_guard<mutex> lock(callsignFrequencyMapMutex);
 		auto it = callsignFrequencyMap.find(kapinfo.Callsign);
-		if (it != callsignFrequencyMap.end())
+		if (it != callsignFrequencyMap.end() && !it->second.empty())
 		{
-			kapinfo.listenFrequency = it->second;
+			kapinfo.listenFrequency = KHzToString(it->second[0]);
+			kapinfo.isHearingMyFrequency = std::find(it->second.begin(), it->second.end(), GetMyFrequencyKHz()) != it->second.end();
 		}
 		else
 		{
 			kapinfo.listenFrequency = "UNKNOWN";
+			kapinfo.isHearingMyFrequency = false;
 		}
 	}
 	int flightType = kapinfo.GetTypeOfFlight();
@@ -781,7 +802,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 
 	if (ItemCode == TAG_ITEM_KAP_FREQUENCY)
 	{
-		if (GetMyFrequency() == kapinfo.listenFrequency)
+		if (kapinfo.isHearingMyFrequency)
 		{
 			setTag(sItemString, pColorCode, pRGB, TAG_COLOR_DEFAULT, 0, "%s", "MY_FREQ");
 		}
@@ -1515,7 +1536,7 @@ void CKAPChecker::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget,
 		}
 	}
 
-	if (GetMyFrequency() == kapinfo.listenFrequency && !kapinfo.IsInRKRR() && !kapinfo.IsDestinationRKRR())
+	if (kapinfo.isHearingMyFrequency && !kapinfo.IsInRKRR() && !kapinfo.IsDestinationRKRR())
 	{
 		setTag(sItemString, pColorCode, pRGB, TAG_COLOR_RGB_DEFINED, RGB_YELLOW, "%s", "HEAR_MY_FREQ");
 		return;
