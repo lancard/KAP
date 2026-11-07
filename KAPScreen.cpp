@@ -1,17 +1,12 @@
 #include "KAPScreen.h"
 
+#define OBJ_PANEL 17777
+
 extern unordered_map<std::string, CPosition> runway_map;
 extern unordered_map<string, vector<int>> callsignFrequencyMap; // kHz
 extern std::mutex callsignFrequencyMapMutex;
-namespace
-{
-    string KHzToString(int khz)
-    {
-        char b[32];
-        snprintf(b, sizeof(b), "%d.%03d", khz / 1000, khz % 1000);
-        return b;
-    }
-}
+
+string KHzToString(int khz);
 
 CKAPScreen::CKAPScreen(CKAPChecker *plugin)
 {
@@ -33,11 +28,6 @@ void CKAPScreen::OnAsrContentToBeClosed(void)
 {
     delete this;
 }
-
-enum
-{
-    OBJ_PANEL = 1
-};
 
 namespace
 {
@@ -121,13 +111,13 @@ static std::vector<ControllerEntry> CollectControllers(CKAPChecker *plugin)
 
         char buf[256];
         if (monitoring.empty())
-            snprintf(buf, sizeof(buf), "%s %s(%.3f) - %s",
-                     id.c_str(), callsign.c_str(),
-                     c.GetPrimaryFrequency(), c.GetFullName());
+            snprintf(buf, sizeof(buf), "%3s %.3f %s - %s",
+                     id.c_str(), c.GetPrimaryFrequency(), callsign.c_str(),
+                     c.GetFullName());
         else
-            snprintf(buf, sizeof(buf), "%s %s(%.3f) %s - %s",
-                     id.c_str(), callsign.c_str(),
-                     c.GetPrimaryFrequency(), monitoring.c_str(), c.GetFullName());
+            snprintf(buf, sizeof(buf), "%3s %.3f %s (M: %s) - %s",
+                     id.c_str(), c.GetPrimaryFrequency(), callsign.c_str(),
+                     monitoring.c_str(), c.GetFullName());
 
         ControllerEntry e;
         e.callsign = callsign;
@@ -165,105 +155,103 @@ void CKAPScreen::OnMoveScreenObject(int ObjectType, const char *sObjectId,
     }
 }
 
-void CKAPScreen::OnRefresh(HDC hDC, int Phase)
+void CKAPScreen::DrawATC(HDC hDC)
 {
-    if (Phase != EuroScopePlugIn::REFRESH_PHASE_AFTER_TAGS)
-        return;
+    std::vector<ControllerEntry> controllers = CollectControllers(KAPPlugin);
 
+    // 기존 상태 저장 + 고정 폰트 선택 (GetTextMetrics보다 먼저)
+    int oldBkMode = SetBkMode(hDC, TRANSPARENT);
+    COLORREF oldColor = GetTextColor(hDC);
+    HFONT oldFont = (HFONT)SelectObject(hDC, m_font);
+
+    TEXTMETRIC tm;
+    GetTextMetrics(hDC, &tm);
+    const int lineH = tm.tmHeight;
+
+    // 컨트롤러가 없으면 "no ATC" 한 줄 표시
+    const char *noAtcText = "no ATC";
+    const bool empty = controllers.empty();
+
+    // 가장 긴 텍스트 폭 계산
+    int maxW = 0;
+    if (empty)
     {
-        std::vector<ControllerEntry> controllers = CollectControllers(KAPPlugin);
-
-        // 기존 상태 저장 + 고정 폰트 선택 (GetTextMetrics보다 먼저)
-        int oldBkMode = SetBkMode(hDC, TRANSPARENT);
-        COLORREF oldColor = GetTextColor(hDC);
-        HFONT oldFont = (HFONT)SelectObject(hDC, m_font);
-
-        TEXTMETRIC tm;
-        GetTextMetrics(hDC, &tm);
-        const int lineH = tm.tmHeight;
-
-        // 컨트롤러가 없으면 "no ATC" 한 줄 표시
-        const char *noAtcText = "no ATC";
-        const bool empty = controllers.empty();
-
-        // 가장 긴 텍스트 폭 계산
-        int maxW = 0;
-        if (empty)
+        SIZE sz;
+        GetTextExtentPoint32A(hDC, noAtcText, (int)strlen(noAtcText), &sz);
+        maxW = sz.cx;
+    }
+    else
+    {
+        for (const auto &e : controllers)
         {
             SIZE sz;
-            GetTextExtentPoint32A(hDC, noAtcText, (int)strlen(noAtcText), &sz);
-            maxW = sz.cx;
+            GetTextExtentPoint32A(hDC, e.text.c_str(), (int)e.text.size(), &sz);
+            if (sz.cx > maxW)
+                maxW = sz.cx;
         }
-        else
-        {
-            for (const auto &e : controllers)
-            {
-                SIZE sz;
-                GetTextExtentPoint32A(hDC, e.text.c_str(), (int)e.text.size(), &sz);
-                if (sz.cx > maxW)
-                    maxW = sz.cx;
-            }
-        }
-
-        int panelW = maxW;
-        int panelH = (empty ? 1 : (int)controllers.size()) * lineH;
-
-        // 위치: 처음엔 우측 상단, 드래그 후에는 저장된 좌표 사용
-        RECT panel;
-        if (!m_panelMoved)
-        {
-            RECT radar = GetRadarArea();
-            panel.right = radar.right;
-            panel.left = panel.right - panelW;
-            panel.top = radar.top;
-            panel.bottom = panel.top + panelH;
-        }
-        else
-        {
-            panel.left = m_panelPos.x;
-            panel.top = m_panelPos.y;
-            panel.right = panel.left + panelW;
-            panel.bottom = panel.top + panelH;
-        }
-
-        // 배경 + 외곽선 (컨트롤러가 없어도 항상 표시)
-        HBRUSH bg = CreateSolidBrush(RGB(40, 40, 40));
-        FillRect(hDC, &panel, bg);
-        DeleteObject(bg);
-        FrameRect(hDC, &panel, (HBRUSH)GetStockObject(WHITE_BRUSH));
-        AddScreenObject(OBJ_PANEL, "TOPRIGHT_PANEL", panel, true, "Drag me");
-
-        if (empty)
-        {
-            SetTextColor(hDC, RGB(220, 220, 220));
-            RECT line = {panel.left, panel.top, panel.right, panel.top + lineH};
-            DrawTextA(hDC, noAtcText, -1, &line,
-                      DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
-        }
-        else
-        {
-            int y = panel.top;
-            for (const auto &e : controllers)
-            {
-                COLORREF color = e.isObs         ? RGB(140, 140, 140)  // OBS
-                                 : (e.rank == 0) ? RGB(120, 220, 255)  // RK
-                                 : (e.rank == 1) ? RGB(160, 255, 160)  // ZK
-                                                 : RGB(220, 220, 220); // 기타
-                SetTextColor(hDC, color);
-
-                RECT line = {panel.left, y, panel.right, y + lineH};
-                DrawTextA(hDC, e.text.c_str(), -1, &line,
-                          DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
-                y += lineH;
-            }
-        }
-
-        // 복원 (폰트는 처음 hDC에 선택돼 있던 것으로)
-        SelectObject(hDC, oldFont);
-        SetTextColor(hDC, oldColor);
-        SetBkMode(hDC, oldBkMode);
     }
-    
+
+    int panelW = maxW;
+    int panelH = (empty ? 1 : (int)controllers.size()) * lineH;
+
+    // 위치: 처음엔 우측 상단, 드래그 후에는 저장된 좌표 사용
+    RECT panel;
+    if (!m_panelMoved)
+    {
+        RECT radar = GetRadarArea();
+        panel.right = radar.right;
+        panel.left = panel.right - panelW;
+        panel.top = radar.top;
+        panel.bottom = panel.top + panelH;
+    }
+    else
+    {
+        panel.left = m_panelPos.x;
+        panel.top = m_panelPos.y;
+        panel.right = panel.left + panelW;
+        panel.bottom = panel.top + panelH;
+    }
+
+    // 배경 + 외곽선 (컨트롤러가 없어도 항상 표시)
+    HBRUSH bg = CreateSolidBrush(RGB(40, 40, 40));
+    FillRect(hDC, &panel, bg);
+    DeleteObject(bg);
+    FrameRect(hDC, &panel, (HBRUSH)GetStockObject(WHITE_BRUSH));
+    AddScreenObject(OBJ_PANEL, "ATC_PANEL", panel, true, "Drag me");
+
+    if (empty)
+    {
+        SetTextColor(hDC, RGB(220, 220, 220));
+        RECT line = {panel.left, panel.top, panel.right, panel.top + lineH};
+        DrawTextA(hDC, noAtcText, -1, &line,
+                  DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+    }
+    else
+    {
+        int y = panel.top;
+        for (const auto &e : controllers)
+        {
+            COLORREF color = e.isObs         ? RGB(140, 140, 140)  // OBS
+                             : (e.rank == 0) ? RGB(255, 215, 0)    // RK
+                             : (e.rank == 1) ? RGB(160, 255, 160)  // ZK
+                                             : RGB(220, 220, 220); // 기타
+            SetTextColor(hDC, color);
+
+            RECT line = {panel.left, y, panel.right, y + lineH};
+            DrawTextA(hDC, e.text.c_str(), -1, &line,
+                      DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+            y += lineH;
+        }
+    }
+
+    // 복원 (폰트는 처음 hDC에 선택돼 있던 것으로)
+    SelectObject(hDC, oldFont);
+    SetTextColor(hDC, oldColor);
+    SetBkMode(hDC, oldBkMode);
+}
+
+void CKAPScreen::DrawOccupiedRunways(HDC hDC)
+{
     unordered_map<string, string> callsign_approach_runway_map;
 
     KAPPlugin->getApproachRunwayMapCopy(callsign_approach_runway_map);
@@ -290,4 +278,13 @@ void CKAPScreen::OnRefresh(HDC hDC, int Phase)
 
     SelectObject(hDC, hPenOld);
     DeleteObject(hLinePen);
+}
+
+void CKAPScreen::OnRefresh(HDC hDC, int Phase)
+{
+    if (Phase != EuroScopePlugIn::REFRESH_PHASE_AFTER_TAGS)
+        return;
+
+    DrawATC(hDC);
+    DrawOccupiedRunways(hDC);
 }

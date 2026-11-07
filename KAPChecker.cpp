@@ -16,12 +16,12 @@ unordered_map<string, vector<int>> callsignFrequencyMap; // kHz, 중복 제거, 
 std::mutex callsignFrequencyMapMutex;
 
 // 122800015(Hz) -> 122800(kHz). 소수 오차 보정을 위해 반올림
-static long long HzToKHz(long long hz) { return (hz + 500) / 1000; }
+static int HzToKHz(int hz) { return (hz + 500) / 1000; }
 
-static string KHzToString(long long khz)
+string KHzToString(int khz)
 {
 	char buf[32];
-	snprintf(buf, sizeof(buf), "%lld.%03lld", khz / 1000, khz % 1000);
+	snprintf(buf, sizeof(buf), "%d.%03d", khz / 1000, khz % 1000);
 	return buf;
 }
 
@@ -579,7 +579,7 @@ void CKAPChecker::GetTransceiverThreadRunner()
 					if (!t.contains("frequency") || !t["frequency"].is_number())
 						continue;
 
-					int khz = (int)HzToKHz(t["frequency"].get<long long>());
+					int khz = HzToKHz(t["frequency"].get<int>());
 					if (khz <= 0)
 						continue;
 

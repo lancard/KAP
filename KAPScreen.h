@@ -18,4 +18,6 @@ public:
     virtual void OnRefresh(HDC hDC, int Phase);
     virtual void OnMoveScreenObject(int ObjectType, const char *sObjectId,
                                     POINT Pt, RECT Area, bool Released);
+    void DrawATC(HDC hDC);
+    void DrawOccupiedRunways(HDC hDC);
 };
