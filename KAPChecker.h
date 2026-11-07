@@ -1,5 +1,5 @@
 #pragma once
-#define PROGRAM_VERSION "3.9.2"
+#define PROGRAM_VERSION "3.9.3"
 #include <SDKDDKVer.h>
 #include <afxwin.h>
 #include <string>

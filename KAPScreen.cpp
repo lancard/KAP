@@ -68,7 +68,9 @@ namespace
             return 3;
         if (suffix == "DEL")
             return 4;
-        return 5;
+        if (suffix == "ATIS")
+            return 5;
+        return 6;
     }
 }
 
@@ -212,11 +214,18 @@ void CKAPScreen::DrawATC(HDC hDC)
         panel.bottom = panel.top + panelH;
     }
 
+    // 더블클릭 줄 판정용 (마지막으로 그린 상태 저장)
+    m_lineH = lineH;
+    m_listTop = panel.top;
+    m_lineCallsigns.clear();
+    if (!empty)
+        for (const auto &e : controllers)
+            m_lineCallsigns.push_back(e.callsign);
+
     // 배경 + 외곽선 (컨트롤러가 없어도 항상 표시)
     HBRUSH bg = CreateSolidBrush(RGB(40, 40, 40));
     FillRect(hDC, &panel, bg);
     DeleteObject(bg);
-    FrameRect(hDC, &panel, (HBRUSH)GetStockObject(WHITE_BRUSH));
     AddScreenObject(OBJ_PANEL, "ATC_PANEL", panel, true, "Drag me");
 
     if (empty)
@@ -232,6 +241,7 @@ void CKAPScreen::DrawATC(HDC hDC)
         for (const auto &e : controllers)
         {
             COLORREF color = e.isObs         ? RGB(140, 140, 140)  // OBS
+                             : (e.typeRank == 5) ? RGB(130, 150, 170)  // ATIS
                              : (e.rank == 0) ? RGB(255, 215, 0)    // RK
                              : (e.rank == 1) ? RGB(160, 255, 160)  // ZK
                                              : RGB(220, 220, 220); // 기타
@@ -287,4 +297,22 @@ void CKAPScreen::OnRefresh(HDC hDC, int Phase)
 
     DrawATC(hDC);
     DrawOccupiedRunways(hDC);
+}
+
+void CKAPScreen::OnDoubleClickScreenObject(int ObjectType, const char *sObjectId,
+                                           POINT Pt, RECT Area, int Button)
+{
+    if (ObjectType != OBJ_PANEL)
+        return;
+    if (m_lineH <= 0 || Pt.y < m_listTop)
+        return;
+
+    int idx = (Pt.y - m_listTop) / m_lineH;
+    if (idx < 0 || idx >= (int)m_lineCallsigns.size())
+        return;
+
+    const std::string &callsign = m_lineCallsigns[idx];
+
+    KAPPlugin->DisplayUserMessage(callsign.c_str(), "SYSTEM", "(Type here)",
+                                  true, true, true, false, false);
 }
