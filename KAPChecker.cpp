@@ -556,6 +556,28 @@ CKAPChecker::~CKAPChecker(void)
 	DisplayUserMessage("Message", "KAP", string("KAP Unloaded.").c_str(), false, false, false, false, false);
 }
 
+bool CKAPChecker::OnCompileCommand(const char *sCommand)
+{
+	string message(sCommand);
+
+	// check starts with .atclistfontsize
+	if (message.rfind(".atclistfontsize ", 0) == 0)
+	{
+		// extract logon code
+		string fontsize = message.substr(17); // skip ".atclistfontsize "
+
+		// save to settings
+		if (m_screen)
+			m_screen->SetFontPixelSize(atoi(fontsize.c_str()));
+
+		// send confirmation message
+		DisplayUserMessage("SYSTEM", "SYSTEM", "ATC List Font Size changed and saved successfully.", true, true, false, false, false);
+		return true;
+	}
+
+	return false;
+}
+
 void CKAPChecker::GetTransceiverThreadRunner()
 {
 	while (!terminateSignal.load())
@@ -619,7 +641,8 @@ CRadarScreen *CKAPChecker::OnRadarScreenCreated(const char *sDisplayName,
 												bool CanBeSaved,
 												bool CanBeCreated)
 {
-	return new CKAPScreen(this);
+	m_screen = new CKAPScreen(this);
+	return m_screen;
 }
 
 void CKAPChecker::clearApproachRunwayMap()

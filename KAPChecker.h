@@ -1,5 +1,5 @@
 #pragma once
-#define PROGRAM_VERSION "3.9.3"
+#define PROGRAM_VERSION "3.9.4"
 #include <SDKDDKVer.h>
 #include <afxwin.h>
 #include <string>
@@ -13,9 +13,13 @@
 using namespace std;
 using namespace EuroScopePlugIn;
 
+class CKAPScreen;
+
 class CKAPChecker : public EuroScopePlugIn::CPlugIn
 {
 private:
+	CKAPScreen* m_screen = nullptr;
+
 	mutex callsignApproachRunwayMapMutex;
 	unordered_map<string, string> callsignApproachRunwayMap;
 
@@ -31,6 +35,7 @@ public:
 	const int TAG_ITEM_KAP_FREQUENCY = 7530;
 	const int TAG_ITEM_KAP_DESTINATION_AIRPORT = 7531;
 
+	bool OnCompileCommand(const char *sCommand);
 	void OnGetTagItem(CFlightPlan FlightPlan, EuroScopePlugIn::CRadarTarget RadarTarget,
 					  int ItemCode,
 					  int TagData,

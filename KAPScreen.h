@@ -23,6 +23,8 @@ public:
     virtual void OnDoubleClickScreenObject(int ObjectType, const char *sObjectId, POINT Pt, RECT Area, int Button);
     virtual void OnMoveScreenObject(int ObjectType, const char *sObjectId,
                                     POINT Pt, RECT Area, bool Released);
+
+    void SetFontPixelSize(int pixelSize);
     void DrawATC(HDC hDC);
     void DrawOccupiedRunways(HDC hDC);
 };

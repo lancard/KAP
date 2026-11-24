@@ -12,16 +12,37 @@ CKAPScreen::CKAPScreen(CKAPChecker *plugin)
 {
     this->KAPPlugin = plugin;
 
-    // -11: 작은 글씨 (더 작게는 -10, 더 크게는 -12)
-    m_font = CreateFontA(-11, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
-                         DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-                         DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "Consolas");
+    const char *atcListFontSize = plugin->GetDataFromSettings("ATCListFontSize");
+
+    if (!atcListFontSize)
+    {
+        SetFontPixelSize(11);
+    }
+    else
+    {
+        SetFontPixelSize(atoi(atcListFontSize));
+    }
 }
 
 CKAPScreen::~CKAPScreen()
 {
     if (m_font)
         DeleteObject(m_font);
+}
+
+void CKAPScreen::SetFontPixelSize(int pixelSize)
+{
+    if (m_font)
+        DeleteObject(m_font);
+
+    m_font = CreateFontA(-pixelSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+                         DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+                         DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "Consolas");
+
+    std::string value = std::to_string(pixelSize);
+    this->KAPPlugin->SaveDataToSettings("ATCListFontSize",
+                                        "ATC List Font Size",
+                                        value.c_str());
 }
 
 void CKAPScreen::OnAsrContentToBeClosed(void)
@@ -240,11 +261,11 @@ void CKAPScreen::DrawATC(HDC hDC)
         int y = panel.top;
         for (const auto &e : controllers)
         {
-            COLORREF color = e.isObs         ? RGB(140, 140, 140)  // OBS
+            COLORREF color = e.isObs             ? RGB(140, 140, 140)  // OBS
                              : (e.typeRank == 5) ? RGB(130, 150, 170)  // ATIS
-                             : (e.rank == 0) ? RGB(255, 215, 0)    // RK
-                             : (e.rank == 1) ? RGB(160, 255, 160)  // ZK
-                                             : RGB(220, 220, 220); // 기타
+                             : (e.rank == 0)     ? RGB(255, 215, 0)    // RK
+                             : (e.rank == 1)     ? RGB(160, 255, 160)  // ZK
+                                                 : RGB(220, 220, 220); // 기타
             SetTextColor(hDC, color);
 
             RECT line = {panel.left, y, panel.right, y + lineH};
